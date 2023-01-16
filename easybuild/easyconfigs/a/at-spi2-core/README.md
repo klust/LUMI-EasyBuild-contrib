@@ -1,4 +1,4 @@
-# atk-spi2-core instructions
+# at-spi2-core instructions
 
 This is only a dependency for various GTK versions (via at-spi2-atk).
 
@@ -10,11 +10,11 @@ This is only a dependency for various GTK versions (via at-spi2-atk).
     
 ## EasyBuild
 
--   [atk-spi2-core support in EasyBuild](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/a/at-spi2-core)
+-   [at-spi2-core support in EasyBuild](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/a/at-spi2-core)
     
 -   There is no support for atk-spi2-core in the CSCS repository.
     
--   [ atk-spi2-core support in Spack](https://spack.readthedocs.io/en/latest/package_list.html#at-spi2-core)
+-   [ at-spi2-core support in Spack](https://spack.readthedocs.io/en/latest/package_list.html#at-spi2-core)
     
 
 ### Version 2.44.2 for cpeGNU/22.08
