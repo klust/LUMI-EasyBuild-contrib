@@ -38,6 +38,11 @@ dependencies = [
 
 configopts = "--libdir lib "
 
+postinstallcmds = [
+   'mkdir -p %(installdir)s/share/licenses/%(name)s',
+   'cd ../%(namelower)s-%(version)s && cp COPYING %(installdir)s/share/licenses/%(name)s/COPYING',
+]
+
 sanity_check_paths = {
     'files': ['lib/libatspi.%s' % SHLIB_EXT],
     'dirs':  [],

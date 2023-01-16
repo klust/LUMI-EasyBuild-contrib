@@ -3,6 +3,9 @@
 This is only a dependency for various GTK versions (via at-spi2-atk).
 
 -   [Home page](https://wiki.gnome.org/Accessibility)
+
+-   [at-spi2-core on the Gnome GitLAb](https://gitlab.gnome.org/GNOME/at-spi2-core)
+
     
     
 ## EasyBuild
