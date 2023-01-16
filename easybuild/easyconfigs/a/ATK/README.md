@@ -8,6 +8,8 @@ It is a dependency for GTK3.
 
 -   [ATK web site](https://developer.gnome.org/atk/)
 
+-   [ATK on the Gnome GitLab](https://gitlab.gnome.org/GNOME/atk)
+
 
 ## EasyBuild
 

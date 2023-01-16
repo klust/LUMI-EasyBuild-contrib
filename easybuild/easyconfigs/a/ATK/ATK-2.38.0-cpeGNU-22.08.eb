@@ -37,6 +37,11 @@ dependencies = [
 configopts  = "--buildtype=release --default-library=both "
 configopts += "-Dintrospection=true "
 
+postinstallcmds = [
+   'mkdir -p %(installdir)s/share/licenses/ATK',
+   'cd ../%(namelower)s-%(version)s && cp COPYING %(installdir)s/share/licenses/ATK/COPYING',
+]
+
 sanity_check_paths = {
     'files': ['lib/libatk-1.0.%s' % SHLIB_EXT, 'include/atk-1.0/atk/atk.h'],
     'dirs':  ['share/locale'],
