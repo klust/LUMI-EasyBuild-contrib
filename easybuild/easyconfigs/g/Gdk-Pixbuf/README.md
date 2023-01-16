@@ -1,5 +1,6 @@
 # Gdk-Pixbuf instructions
 
+-   [Gdk-Pixbuf on the Gnome GitLab](https://gitlab.gnome.org/GNOME/gdk-pixbuf)
 
 
 ## EasyBuild
