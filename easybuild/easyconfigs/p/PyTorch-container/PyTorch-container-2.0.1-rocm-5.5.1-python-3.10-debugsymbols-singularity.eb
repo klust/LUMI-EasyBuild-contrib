@@ -1,7 +1,7 @@
 easyblock = 'MakeCp'
 
-name =    'PyTorch-container'
-version = '2.0.1'
+name =          'PyTorch'
+version =       '2.0.1'
 versionsuffix = '-rocm-5.5.1-python-3.10-debugsymbols-singularity'
 
 local_sif='lumi-pytorch-rocm-5.5.1-python-3.10-pytorch-v2.0.1-debugsymbols-dockerhash-ed0246bfde67.sif'
@@ -15,10 +15,11 @@ whatis = [
 
 description = """
 This module provides a container with PyTorch %(version)s. 
+This container does include debug symbols.
 
 The module defines a number of environment variables:
-*   SIF: The full path and name of the Singularity SIF file to use with 
-    singularity exec etc.
+*   SIF and SIFPYTORCH: The full path and name of the Singularity SIF file 
+    to use with singularity exec etc.
 *   SINGULAIRTY_BINDPATH: Mounts the necessary directories from the system,
     including /users, /project, /scratch and /flash so that you should be
     able to use your regular directories in the container.
@@ -35,7 +36,7 @@ sources = ['PyTorch-2.0.1-rocm-5.5.1-python-3.10-debugsymbols-singularity.tar']
 skipsteps = ['build']
 
 files_to_copy = [
-    ([local_sif], '.'),
+    ([local_sif],    '.'),
     ([local_docker], 'share/docker-defs/')    
 ]
 

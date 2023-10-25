@@ -38,3 +38,6 @@ Example:
 salloc -N1 -pstandard-g -t 30:00
 srun -N1 -n1 --gpus 8 singularity exec $SIF /runscripts/python-conda -c "import torch"
 ```
+
+After loading the module, the docker definition file used when building the container
+is available in the `$EBROOTPYTORCHMINCONTAINER/share/docker-defs` subdirectory.
