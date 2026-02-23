@@ -39,7 +39,8 @@ toolchain = {'name': 'cpeGNU', 'version': '25.03'}
 source_urls = ['https://github.com/OpenFOAM/OpenFOAM-%(version_major)s/archive/refs/tags']
 sources     = [
     {
-        'filename': f'OpenFOAM-%(version_major)s%(versionsuffix)s.tar.gz'
+        'filename': f'OpenFOAM-%(version_major)s%(versionsuffix)s.tar.gz',
+        'download_filename': '%(local_version_tag)s.tar.gz',
     }]
 patches = [
     ('wmake-rules-linux64Cray-gcc13.patch', 0),
