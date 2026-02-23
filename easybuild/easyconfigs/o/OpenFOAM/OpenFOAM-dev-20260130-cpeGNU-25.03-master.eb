@@ -4,11 +4,11 @@
 
 easyblock = 'Binary'
 
-local_version_tag = '20260130'
+version_tag = '20260130'
 
 name          = 'OpenFOAM'
 version       = 'dev'
-versionsuffix = f'-{local_version_tag}'
+versionsuffix = f'-{version_tag}'
 
 homepage = 'http://www.openfoam.org/'
 
@@ -40,7 +40,7 @@ source_urls = ['https://github.com/OpenFOAM/OpenFOAM-%(version_major)s/archive/r
 sources     = [
     {
         'filename': f'OpenFOAM-%(version_major)s%(versionsuffix)s.tar.gz',
-        'download_filename': '{local_version_tag}.tar.gz',
+        'download_filename': '%(version_tag)s.tar.gz',
     }]
 patches = [
     ('wmake-rules-linux64Cray-gcc13.patch', 0),
