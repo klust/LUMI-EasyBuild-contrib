@@ -4,7 +4,7 @@
 
 easyblock = 'Binary'
 
-local_version_tag = 'master'
+local_version_tag = '20260130'
 
 name          = 'OpenFOAM'
 version       = 'dev'
