@@ -52,8 +52,9 @@ prebuildopts = 'sed -i "s/#define HAVE_FFTW3_THREADS 1/\\/\\* #undef HAVE_FFTW3_
 
 dependencies = [
     ('libxc',                    "7.0.0", "-KXC"),
-    ('ELPA',                     "2025.06.001"),
+    ('ELPA',                     "2025.06.001", "-CPU"),
     ('cray-python',              EXTERNAL_MODULE),
+    ('cray-libsci',              EXTERNAL_MODULE),
     ('cray-fftw',                EXTERNAL_MODULE),
     ('cray-hdf5-parallel',       EXTERNAL_MODULE),
     ('cray-netcdf-hdf5parallel', EXTERNAL_MODULE),
