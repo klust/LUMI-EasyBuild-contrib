@@ -52,6 +52,7 @@ prebuildopts = 'sed -i "s/#define HAVE_FFTW3_THREADS 1/\\/\\* #undef HAVE_FFTW3_
 
 dependencies = [
     ('libxc',                    "7.0.0", "-KXC"),
+    ('ELPA',                     "2025.06.001"),
     ('cray-python',              EXTERNAL_MODULE),
     ('cray-fftw',                EXTERNAL_MODULE),
     ('cray-hdf5-parallel',       EXTERNAL_MODULE),
@@ -61,7 +62,7 @@ dependencies = [
 configopts =  ' --with-mpi=yes'
 configopts += ' --enable-mpi-io=yes'
 configopts += ' --enable-mpi-inplace=yes'
-configopts += ' --enable-gw-dpc=yes'
+# configopts += ' --enable-gw-dpc=yes'  # uncomment if you want higher precision in GW but it will require more memory
 configopts += ' --enable-openmp=yes'
 configopts += ' --with-fft-flavor=fftw3'
 configopts += ' --with-optim-flavor=standard'
@@ -73,7 +74,7 @@ configopts += ' LINALG_LIBS="-lsci_gnu -lsci_gnu_mpi"'
 configopts += ' FCFLAGS="-ffree-line-length-none -fallow-argument-mismatch ${FCFLAGS}"'
 configopts += ' FFTW3_LIBS="-L${FFTW_ROOT}/lib -lfftw3 -lfftw3f"'
 
-pretestopts = 'export OMP_NUM_THREADS=1 && '
+pretestopts = 'ulimit -s unlimited && export OMP_NUM_THREADS=1 && '
 runtest =     'check && make test_v1'
 
 sanity_check_paths = {
