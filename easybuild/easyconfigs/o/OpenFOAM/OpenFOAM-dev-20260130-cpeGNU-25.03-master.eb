@@ -1,6 +1,7 @@
 # Version 10, based on instructions from Esko Järvinen, CSC
 # Updated to version 10 by Orian Louant
 # Updated to version 12 by Stanislau Stasheuski
+# Ported to dev version by Tor Skovsgaard (DeiC)
 
 easyblock = 'Binary'
 
