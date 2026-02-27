@@ -1,0 +1,87 @@
+# Based on work of Matthias Kraushaar (CSCS)
+# Adapted for LUMI by Hsiao-Yi Tsai
+easyblock = 'ConfigureMake'
+
+name = 'ABINIT'
+version = '10.6.3'
+
+homepage = 'https://www.abinit.org/'
+
+whatis = [
+    "Description: ABINIT is a software suite to calculate the optical, "
+    "mechanical, vibrational, and other observable properties of materials"
+]
+
+description = """
+ABINIT is a software suite to calculate the optical, mechanical, vibrational,
+and other observable properties of materials. Starting from the quantum
+equations of density functional theory, you can build up to advanced
+applications with perturbation theories based on DFT, and many-body Green's
+functions (GW and DMFT).
+
+ABINIT can calculate molecules, nanostructures and solids with any chemical
+composition, and comes with several complete and robust tables of atomic
+potentials.
+
+This module provides an pure MPI executable. It includes support for netCDF,
+HDF5, LibXC functionals.
+"""
+
+docurls = [
+    'Documentation: https://docs.abinit.org/',
+    'Tutorials:  https://docs.abinit.org/tutorial/'
+]
+
+software_license_urls = ['https://docs.abinit.org/about/license/']
+
+toolchain = {'name': 'cpeGNU', 'version': '25.03'}
+toolchainopts = {'usempi': True, 'openmp': True, 'pic': True}
+
+source_urls = ['https://forge.abinit.org/']
+sources = [SOURCELOWER_TAR_GZ]
+checksums = [
+    'aceefc4289873097bb6b9dc4ec05efd897b9c052eb860746f6d778f4cd14317d'
+]
+
+builddependencies = [
+    ('buildtools', '%(toolchain_version)s', '', True),
+]
+
+# comment FFTW3_THREADS in config.h to avoid linking with fftw threads library
+prebuildopts = 'sed -i "s/#define HAVE_FFTW3_THREADS 1/\\/\\* #undef HAVE_FFTW3_THREADS \\*\\//g" config.h && '
+
+dependencies = [
+    ('libxc',                    "7.0.0", "-KXC"),
+    ('ELPA',                     "2025.06.001", "-CPU"),
+    ('cray-python',              EXTERNAL_MODULE),
+    ('cray-libsci',              EXTERNAL_MODULE),
+    ('cray-fftw',                EXTERNAL_MODULE),
+    ('cray-hdf5-parallel',       EXTERNAL_MODULE),
+    ('cray-netcdf-hdf5parallel', EXTERNAL_MODULE),
+]
+
+configopts =  ' --with-mpi=yes'
+configopts += ' --enable-mpi-io=yes'
+configopts += ' --enable-mpi-inplace=yes'
+# configopts += ' --enable-gw-dpc=yes'  # uncomment if you want higher precision in GW but it will require more memory
+configopts += ' --enable-openmp=yes'
+configopts += ' --with-fft-flavor=fftw3'
+configopts += ' --with-optim-flavor=standard'
+configopts += ' --with-linalg-flavor=netlib+elpa'
+configopts += ' --with-libxc=${EBROOTLIBXC}'
+configopts += ' --with-elpa=${EBROOTELPA}'
+configopts += ' CC=cc CXX=CC FC=ftn'
+configopts += ' FCLIBS=" "'
+configopts += ' LINALG_LIBS="-lsci_gnu -lsci_gnu_mpi"'
+configopts += ' FCFLAGS="-ffree-line-length-none -fallow-argument-mismatch ${FCFLAGS}"'
+configopts += ' FFTW3_LIBS="-L${FFTW_ROOT}/lib -lfftw3 -lfftw3f"'
+
+pretestopts = 'ulimit -s unlimited && export OMP_NUM_THREADS=1 && '
+runtest =     'check && make test_v1'
+
+sanity_check_paths = {
+    'files': ['bin/%s' % x for x in ['abinit', 'aim', 'atdep', 'conducti', 'dummy_tests', 'fold2Bloch', 'lapackprof', 'macroave', 'mrgdv', 'mrgscr', 'optic', 'vdw_kernelgen', 'abitk', 'anaddb', 'band2eps', 'cut3d', 'fftprof', 'ioprof', 'lruj', 'mrgddb', 'mrggkk', 'multibinit', 'testtransposer']],
+    'dirs': ['lib/pkgconfig'],
+}
+
+moduleclass = 'chem'
