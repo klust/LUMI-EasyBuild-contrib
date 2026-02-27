@@ -1,8 +1,9 @@
 # vim: set syntax=python:
 easyblock = 'ConfigureMake'
 
-name = 'dlb'
-version = '3.6.1'
+name =          'dlb'
+version =       '3.6.1'
+versionsuffix = '-rocm'
 
 description = """
 DLB is a dynamic library designed to speed up HPC hybrid applications (i.e.,

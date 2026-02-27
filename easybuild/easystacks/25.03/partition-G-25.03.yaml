@@ -41,6 +41,11 @@ easyconfigs:
   - Cython-3.1.2-cpeGNU-25.03.eb
   - CuPy-13.5.1-cpeGNU-25.03-rocm.eb
 #
+# dlb
+#
+  - dlb-3.6.1-cpeGNU-25.03-rocm.eb
+  - dlb-3.6.1-cpeCray-25.03-rocm.eb
+#
 # ecCodes
 #
   - ecCodes-2.42.0-cpeGNU-25.03.eb
