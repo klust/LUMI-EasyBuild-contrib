@@ -16,6 +16,10 @@
   * [dlb package in Spack](https://packages.spack.io/package.html?name=dlb)
 
 
+### Version 3.6.1 for cpeGNU and cpeCray
+
+  * Add ROCm support
+
 ### Version 3.5.3 for cpeGNU and cpeCray
 
   * The EasyConfig is a port of the 3.5.2 one.

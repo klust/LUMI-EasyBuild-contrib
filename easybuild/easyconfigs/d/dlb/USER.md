@@ -4,9 +4,9 @@
 ## Installing DLB
 
 The installation procedure is described on the [EasyBuild page][EasyBuild].
-The step by step procedure to install DLB 3.5.3 is:
+The step by step procedure to install DLB 3.6.1 is:
 
-1. Load the LUMI software environment: `module load LUMI/24.03`.
+1. Load the LUMI software environment: `module load LUMI/25.03`.
 2. Select the LUMI-C partition: `module load partition/C`.
 3. Load the EasyBuild module: `module load EasyBuild-user`.
 
@@ -14,15 +14,15 @@ The step by step procedure to install DLB 3.5.3 is:
 Then, you can run the install command:
 
 ```bash
-$ eb -r dlb-3.5.3-cpeGNU-24.03.eb
+$ eb -r dlb-3.6.1-cpeGNU-25.03.eb
 ```
 
-The installation takes about a minute. Afterwards, you will have a module
-called "dlb/3.5.3-cpeGNU-24.03" installed in your home directory.
+The installation takes a few minutes. Afterwards, you will have a module
+called "dlb/3.6.1-cpeGNU-25.03" installed in your home directory.
 Load the module to use it:
 
 ```bash
-$ module load dlb/3.5.3-cpeGNU-24.03
+$ module load dlb/3.6.1-cpeGNU-25.03
 ```
 
 The dlb binaries will now be in your `PATH`. Launch `dlb --help` to
@@ -40,7 +40,7 @@ or checking the [LUMI-EasyBuild-contrib](DLB-LUMI-EasyBuild-contrib)
 repository on GitHub directly.
 
 
-## TALP example
+## TALP example (MPI + OpenMP profiling)
 
 TALP is a low-overhead performance profiling tool integrated within DLB,
 designed to collect detailed runtime metrics from applications that use MPI and
@@ -64,9 +64,9 @@ A typical batch job of a hybrid MPI+OpenMP application:
 #SBATCH --account=project_<id>  # Project for billing
 
 
-module load LUMI/24.03
+module load LUMI/25.03
 module load partition/C
-module load dlb/3.5.3-cpeCray-24.03
+module load dlb/3.6.1-cpeCray-25.03
 
 # Set DLB options
 export DLB_ARGS="--talp --ompt --talp-openmp"
@@ -82,6 +82,36 @@ srun env LD_PRELOAD="$dlb_preload" ./your_application
 With the options shown above, TALP will generate a summary at the end of
 execution showing the POP performance metrics. For additional output formats and
 customization options, refer to the documentation.
+
+## TALP example (MPI + GPU profiling)
+
+Since DLB version 3.6.0, TALP can also profile GPU metrics when used with ROCm
+6.2 or later. The provided EasyBuild recipes already include support for ROCm:
+
+```bash
+#!/bin/bash -l
+#SBATCH --job-name=examplejob   # Job name
+#SBATCH --output=examplejob.o%j # Name of stdout output file
+#SBATCH --error=examplejob.e%j  # Name of stderr error file
+#SBATCH --partition=standard-g  # partition name
+#SBATCH --nodes=2               # Total number of nodes
+#SBATCH --ntasks-per-node=8     # Number of mpi tasks per node
+#SBATCH --gpus-per-node=8       # Allocate one gpu per MPI rank
+#SBATCH --time=1-12:00:00       # Run time (d-hh:mm:ss)
+#SBATCH --account=project_<id>  # Project for billing
+
+
+module load LUMI/25.03
+module load partition/G
+module load dlb/3.6.1-cpeCray-25.03
+
+# Set DLB options
+export DLB_ARGS="--talp --plugin=rocprofiler-sdk"
+dlb_preload="$EBROOTDLB/lib/libdlb_mpi.so"
+
+# Launch application preloading DLB
+srun <binding options> env LD_PRELOAD="$dlb_preload" ./your_application
+```
 
 
 [EasyBuild]: https://docs.lumi-supercomputer.eu/software/installing/easybuild/
