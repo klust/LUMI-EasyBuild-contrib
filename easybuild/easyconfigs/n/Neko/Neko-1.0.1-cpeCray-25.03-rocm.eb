@@ -1,3 +1,5 @@
+#DOC This version of Neko had to be compiled with `-O0` for the Fortran code
+#DOC and as a result of this, the performance is not as good as in past versions.
 easyblock = 'ConfigureMake'
 
 name =          'Neko'
