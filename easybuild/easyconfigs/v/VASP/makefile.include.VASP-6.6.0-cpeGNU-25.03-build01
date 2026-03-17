@@ -71,7 +71,7 @@ LLIBS      += $(SCALAPACK) $(BLASPACK)
 # Note the explicit linking to -lffttw3_omp. It needs to be done due a bug in the build system.
 # For some reason, the Cray ftn wrapper does not pick up that OpenMP is enabled for FFTW
 LLIBS      += -L$(FFTW_ROOT)/lib -lfftw3 -lfftw3_omp
-INCS       += -I$(FFTW_INC) $(shell pkg-config --cflags dftd4) 
+INCS       += -I$(FFTW_INC) $(shell pkg-config --cflags dftd4) $(shell pkg-config --cflags mctc-lib)
 
 # HDF5-support (optional but strongly recommended)
 # Use HDF5 from the Cray-module

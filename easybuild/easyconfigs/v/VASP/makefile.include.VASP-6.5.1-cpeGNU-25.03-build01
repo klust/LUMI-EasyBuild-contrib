@@ -1,5 +1,5 @@
 # Default precompiler options
-CPP_OPTIONS = -DHOST=\"LUMI2403B01\" \
+CPP_OPTIONS = -DHOST=\"LUMI2503B01\" \
               -DMPI -DMPI_BLOCK=65536 -Duse_collective \
               -DscaLAPACK \
               -DCACHE_SIZE=4000 \
