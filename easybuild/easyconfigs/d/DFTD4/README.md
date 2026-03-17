@@ -14,3 +14,19 @@
 
 -   There is no support in the CSCS repository
 
+
+### Version 3.4.0
+
+-   The EasyConfig is mostly a LUST development
+
+
+### Version 3.7.0
+
+-   Port of the 3.4.0 version, but a patch was needed.
+
+
+### Version 4.0.2
+
+-   With this version, a new dependency comes in: mctc-lib.
+
+

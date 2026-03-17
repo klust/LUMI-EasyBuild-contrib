@@ -67,14 +67,17 @@ specifically for LUMI.
 
     - A few patches to the source code to improve slow VASP startup times by improving the disk I/O on LUMI. This is the recommended version.
 
+
 ### 6.6.0 for LUMI/25.03
 
-- build01
+-   Fairly straightforward port of previous versions. There is a new dependency-of-a-dependency though.
 
-  - Plain build with high optimization, but no source code modifications.
+-   build01
 
-- build02
+    -   Plain build with high optimization, but no source code modifications.
 
-    - A few patches to the source code to improve slow VASP startup times by improving the disk I/O on LUMI. This is the recommended version.
+-   build02
+
+    -   A few patches to the source code to improve slow VASP startup times by improving the disk I/O on LUMI. This is the recommended version.
 
 

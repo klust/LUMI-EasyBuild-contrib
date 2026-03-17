@@ -39,18 +39,17 @@ Foundation, either version 3 of the License, or (at your option) any later versi
 toolchain = {'name': 'cpeGNU', 'version': '25.03'}
 
 source_urls = ['https://github.com/dftd4/dftd4/releases/download/v4.0.2/']
-sources = ['dftd4-4.0.2-source.tar.xz']
-checksums = ['ed4a6a3ba0a89b8d6825bf11724dee647fd8ee6272e7822e0cbd9847994eb872']
+sources =     ['dftd4-4.0.2-source.tar.xz']
+checksums =   ['ed4a6a3ba0a89b8d6825bf11724dee647fd8ee6272e7822e0cbd9847994eb872']
 
 builddependencies = [
-     ('buildtools-python', '%(toolchain_version)s', '-systemPython', True),
-     ('buildtools', '%(toolchain_version)s', '', True)
+     ('buildtools',        '%(toolchain_version)s', '',              SYSTEM),
+     ('buildtools-python', '%(toolchain_version)s', '-systemPython', SYSTEM)
 ]
 
 dependencies = [
      ('mctc-lib', '0.5.0')
 ]
-
 
 preconfigopts = 'export FC=ftn && export CC=cc &&'
 
@@ -59,7 +58,7 @@ configopts = '-Dlapack=custom -Dapi_v2=true'
 
 sanity_check_paths = {
 	'files' : ['bin/dftd4','lib/libdftd4.a','include/dftd4.h'],
-	'dirs' : ['bin','lib64','include']
+	'dirs' :  ['bin','lib64','include']
 }
 
 sanity_check_commands = ["dftd4 --version"]
