@@ -91,7 +91,6 @@ postinstallcmds = [
     '/bin/rm -r %(installdir)s/share/doc %(installdir)s/share/hwloc',
     '/bin/rm -r %(installdir)s/share/man/man1/hwloc* %(installdir)s/share/man/man3 %(installdir)s/share/man/man7',
     'mkdir -p %(installdir)s/share/licenses/lstopo',
-    'echo "We are now in $PWD"',
     f'cd ../hwloc-{local_hwloc_version} && cp AUTHORS COPYING NEWS README %(installdir)s/share/licenses/lstopo',
 ]
 
