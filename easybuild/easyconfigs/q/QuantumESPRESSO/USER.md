@@ -44,6 +44,8 @@ Then, you can run the install command
 $ eb -r QuantumESPRESSO-7.5-cpeGNU-25.03-CPU.eb
 ```
 
+Builds tend to take 5-10 minutes but depend also on the version of QuantumESPRESSO
+as the package is expanding in size.
 When the installation finishes, you will have a module
 called "QuantumESPRESSO/7.5-cpeGNU-25.03-CPU" installed in your home directory.
 Load the module to use it

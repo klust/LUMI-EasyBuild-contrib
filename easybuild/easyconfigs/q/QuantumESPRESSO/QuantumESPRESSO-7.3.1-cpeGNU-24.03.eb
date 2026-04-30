@@ -4,11 +4,23 @@ name = 'QuantumESPRESSO'
 version = '7.3.1'
 
 homepage = 'https://www.quantum-espresso.org'
-description = '''Quantum ESPRESSO  is an integrated suite of computer codes
+
+whatis = [
+    'Description: QuantumESPRESSO is a suite of codes for electronic structure calculations based on DFT, plane wave and pseudopotentials'    
+]
+
+description = """
+Quantum ESPRESSO  is an integrated suite of computer codes
 for electronic-structure calculations and materials modeling at the nanoscale.
 It is based on density-functional theory, plane waves, and pseudopotentials
 (both norm-conserving and ultrasoft).
-'''
+
+In case you experience crashes with OpenMP runs, you may want to experience
+with the OMP_STACKSIZE environment variable. The default size is rather small
+(depending on ulimit -s) and you may need a bigger value, e.g., the rather
+extreme
+export OMP_STACKSIZE=1G
+"""
 
 toolchain = {'name': 'cpeGNU', 'version': '24.03'}
 toolchainopts = {'usempi': True, 'openmp': True}
