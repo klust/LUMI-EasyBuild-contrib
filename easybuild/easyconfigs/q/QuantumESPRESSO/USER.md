@@ -14,18 +14,18 @@ Open-Source computer codes for electronic-structure calculations and materials
 modeling at the nanoscale. It is based on density-functional theory, plane
 waves, and pseudopotentials.". In general, it runs well on [LUMI-C][lumi-c].
 
-**There is currently (May 2025 last update) no AMD release of QE that we can support from the LUMI User
-Support Team. Some recent releases have support for AMD GPUs via OpenMP offload.
+**There is currently (May 2026 last update) no AMD release of QE that we can support from the LUMI User
+Support Team. Some releases have support for AMD GPUs via OpenMP offload.
 However, [version 7.4.1omp](https://gitlab.com/QEF/q-e-omp-repository/-/releases/qe-7.4.1omp) requires 
 [the Cray compiler CCE 15 or older](https://gitlab.com/QEF/q-e/-/wikis/Support/Build-cray-gpu)
 as there are issues with CCE 16 to 18. CCE 15 requires using a ROCm version (5.2,
 though 5.4 worked also) that is not
 supported by the current driver on LUMI, and in fact, is even known to fail.
-The Cray PE 25.03, expected to be installed on LUMI in late summer of 2025, may
-solve the issues with QE on the LUMI-G GPUs.
-Note that even though we do have CPE 25.03 with CCE 19 in [a container](../../c/ccpe/index.md), this 
-container cannot be used on LUMI-G to run software as it is based on ROCm 6.3 which also 
-has issues on the current AMD GPU driver.**
+Developers are working on a version that works with newer compilers and ROCm(tm) versions,
+but mentioned issues with the Cray PE 25.03 and ROCm(tm) 6.3.
+We are waiting for further information from them to try with newer compilers and more
+recent ROCm(tm) versions, but anything requiring ROCm(tm) 7 may only come after 
+another system update.**
 
 ## Installing Quantum ESPRESSO
 
@@ -34,27 +34,27 @@ general, the installation procedure is described on the [EasyBuild
 page][EasyBuild]. The step by step procedure to install QE 7.1
 is:
 
-1. Load the LUMI software environment: `module load LUMI/24.03`.
+1. Load the LUMI software environment: `module load LUMI/25.03`.
 2. Select the LUMI-C partition: `module load partition/C`.
 3. Load the EasyBuild module: `module load EasyBuild-user`.
 
 Then, you can run the install command
 
 ```bash
-$ eb -r QuantumESPRESSO-7.3.1-cpeGNU-24.03.eb
+$ eb -r QuantumESPRESSO-7.5-cpeGNU-25.03-CPU.eb
 ```
 
-The installation takes about 3 minutes. Afterwards, you will have a module
-called "QuantumESPRESSO/7.3.1-cpeGNU-24.03" installed in your home directory.
+When the installation finishes, you will have a module
+called "QuantumESPRESSO/7.5-cpeGNU-25.03-CPU" installed in your home directory.
 Load the module to use it
 
 ```bash
-$ module load QuantumESPRESSO/7.3.1-cpeGNU-24.03.0
+$ module load QuantumESPRESSO/7.5-cpeGNU-25.03-CPU
 ```
 
 The usual QE binaries, `pw.x`, `ph.x` etc. will now be in your `PATH`. Launch
 QE via the [Slurm scheduler][slurm-quickstart], e.g. `srun pw.x`. Please note
-that you must do `module load LUMI/24.03 partition/C` to see your Quantum
+that you must do `module load LUMI/25.03 partition/C` to see your Quantum
 Espresso module in the module system. The same applies to the Slurm batch
 scripts which you send to the compute nodes.
 
@@ -171,6 +171,17 @@ get about the same speed as with MPI only for regular DFT calculations, maybe
 somewhat faster (5-10%). The main benefit, however, is considerably less memory
 usage, about 20% less for DFT. We have not tested the effect on exact exchange
 or other higher order methods yet.
+
+The default stacksize for OpenMP is small when using the GNU compilers
+(system-determined, check with `ulimit -s`, at the time of writing this is
+8MB on LUMI) and this sometimes causes crashes with strange error messages
+that point to memory corruption. In that case, you can experiment with
+different values for the `OMP_STACKSIZE` environment variable, and we have seen
+the need for values as high as
+
+``` bash
+export OMP_STACKSIZE=1G
+```
 
 **FFT task parallelization and pencil decomposition are both necessary when
 running a large number of cores per pool of k-points**. The `-ntg` flag alone
