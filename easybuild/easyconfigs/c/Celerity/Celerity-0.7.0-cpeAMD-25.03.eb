@@ -36,7 +36,7 @@ sources = [{
     'git_config': {
         'url': 'https://github.com/celerity',
         'repo_name': 'celerity-runtime',
-        'commit': '8341c514069fb4e9b34eb4043851676df174a721',
+        'tag': 'v%(version)s',
         'recursive': True,
         'keep_git_dir': True,
     },
