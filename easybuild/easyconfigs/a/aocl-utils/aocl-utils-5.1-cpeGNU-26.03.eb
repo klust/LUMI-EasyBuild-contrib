@@ -1,0 +1,62 @@
+easyblock = 'CMakeMake'
+
+local_AMD_AOCL_version =     '5.1'           # https://github.com/amd/aocl-utils/releases, too much issues with 5.3.
+
+name =    'aocl-utils'
+version = local_AMD_AOCL_version
+
+homepage = 'https://www.amd.com/en/developer/aocl/utils.html'
+
+whatis = [
+    'Description: AOCL-Utils is an uniform interface to all AOCL libraries to access CPU features'
+]
+
+description = """
+The library AOCL-Utils is intended to provide a uniform interface to all AOCL
+libraries to access CPU features, especially for AMD CPUs. The library provides 
+the following features:
+
+ - Core details
+ - Flags available/usable
+ - ISA available/usable
+ - Topology about L1/L2/L3
+
+AOCL-Utils is designed to be integrated into other AOCL libraries. Each project
+has their own mechanism to identify CPU and provide necessary features such as
+"dynamic dispatch". The main purpose of this library is to provide a centralized
+mechanism to update/validate and provide information to the users of this library.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+
+# https://github.com/amd/aocl-utils/archive/refs/tags/5.1.tar.gz
+sources = [{
+    'download_filename': '%(version)s.tar.gz',
+    'filename':          SOURCE_TAR_GZ,
+    'source_urls':       ['https://github.com/amd/aocl-utils/archive/refs/tags/']
+}]
+checksums =   ['68d75e04013abe90ea8308a9bc99b99532233b6c7f937f35381563f4124c20a5']
+
+build_deps = [ # Create a reproducible build environment.
+    ('buildtools', '%(toolchain_version)s', '', True),
+]
+
+post_install_cmds = [
+    'rm -f %(installdir)s/lib/libaoclutils.a',
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd ../%(namelower)s-%(version)s && cp License.txt Readme.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': [f'lib/libaoclutils.{SHLIB_EXT}', f'lib/libau_cpuid.{SHLIB_EXT}', 'lib/libau_cpuid.a'],
+    'dirs':  ['lib/CMake', 'include/alci'],
+}
+
+local_test_version = '.'.join( f'{version}.0'.split('.')[:3] ) # This will add .0 if there is only a major and minor version.
+
+sanity_check_commands = [
+    'pkg-config --validate aocl-utils',
+    f'pkg-config --exact-version={local_test_version} aocl-utils',
+]
+
+env_mod_category = 'numlib'

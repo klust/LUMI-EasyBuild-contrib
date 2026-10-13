@@ -45,3 +45,10 @@ There are the python, fortran, rust, and ruby interfaces.
 
 -   Almost trivial port, but took care to add license information to the installation.
 
+
+### Version 2.7.0 for 26.03
+
+-   Trivial port of 2.6.0 for 25.03, but switched to EB6-compatible parameters.
+
+-   Version with OpenMP, Fortran interface and static build included for CP2K as that
+    is how the CP2K build scripts configure that library.

@@ -28,6 +28,8 @@
     
     Cleaned up a bit for 25.03 and added license information.
 
+-   Switched to EB6-compatible parameters for 26.03.
+
 
 ### Version 2.7.0 with CPU only or GPU support for 25.03
 
@@ -36,4 +38,14 @@
 -   Checked why sources are cloned from GitHub: The tar file misses some piece of code
     included recursively in the GitHub repository, and cloning the whole thing from GitHub
     is simply easier then assembling the unpacked sources from different source files.
-    
+
+
+### Version 2.8.4
+
+-   The EasyConfig is a direct evolution of previous versions.
+
+-   There is an issue when trying to build one module with both a static and shared library:
+    libcosta is not built for the second build.
+
+    Therefore we now have separate EasyConfigs for both versions as we didn't want to try to
+    develop a patch for the build process.

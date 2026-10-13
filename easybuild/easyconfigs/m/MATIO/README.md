@@ -30,3 +30,8 @@ MATIO is used by Trilinos.
 ### Version 1.5.29 for cpeGNU 25.03
 
 -   The EasyConfig is a straightforward port of the one for 1.5.27 in 24.03.
+
+
+### 1.5.30 for 26.03
+
+-   The EasyConfig is a straightforward port of the one for 1.5.29 in 25.03.

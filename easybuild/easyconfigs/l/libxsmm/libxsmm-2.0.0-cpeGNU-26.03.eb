@@ -1,0 +1,74 @@
+# Made by Kurt Lust based on the build recipe found in the CP2K code at
+# https://github.com/cp2k/cp2k/blob/v2026.2/tools/toolchain/scripts/stage4/install_libxsmm.sh
+easyblock = 'CMakeMake'
+
+local_libxsmm2_version =      '2.0.0'        # https://github.com/libxsmm/libxsmm/releases
+
+name =    'libxsmm'
+version = local_libxsmm2_version
+
+homepage = 'https://readthedocs.org/projects/libxsmm'
+
+whatis = [
+    'Description: Library targeting Intel Architecture for specialized dense and sparse matrix operations, and deep learning primitives'
+]
+
+description = """
+Library targeting Intel Architecture for specialized dense and sparse matrix
+operations, and deep learning primitives.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'usempi': True, 'openmp': True}
+
+source_urls = ['https://github.com/%(name)s/%(name)s/archive/']
+sources =     ['%(version)s.tar.gz']
+checksums =   ['7e532dc5520f864ce6d7f44f3fd50365e3edb23da97dbdc54fd53845d86a290b']
+
+build_deps = [
+    ('buildtools',          '%(toolchain_version)s', '', SYSTEM),
+    ('craype-network-none', EXTERNAL_MODULE),
+    ('craype-accel-host',   EXTERNAL_MODULE),
+]
+
+local_common_configure_opts = ' '.join([
+    '-DLIBXSMM_FORTRAN=ON',
+    '-DCMAKE_VERBOSE_MAKEFILE=ON',
+    # For the other options, CP2K uses the default values but we give them here in
+    # case someone needs a specialised version for another package.
+    '-DLIBXSMM_PRECISION=0', # LIBXSMM interface precision selection, 0 is single and double precision
+    '-DLIBXSMM_FORTRAN_INTERFACE_LEVEL=2', # LIBXSMM Fortran interface level
+    '-DLIBXSMM_PREFETCH_TYPE=-1',          # LIBXSMM prefetch type
+    '-DLIBXSMM_ILP64=0',                   # Use ILP64 integers in generated LIBXSMM interfaces
+    '-DLIBXSMM_CACHELINE=64',              # LIBXSMM cacheline alignment
+    '-DLIBXSMM_SYNC=1',                    # Enable LIBXSMM synchronization support
+    '-DLIBXSMM_JIT=1',                     # Enable LIBXSMM JIT support
+    '-DLIBXSMM_FLAGS=0',                   # LIBXSMM default GEMM flags
+    '-DLIBXSMM_ALPHA=1',                   # LIBXSMM default alpha value
+    '-DLIBXSMM_BETA=1',                    # LIBXSMM default beta value
+    '-DLIBXSMM_MALLOC=0',                  # LIBXSMM malloc mode
+])
+
+configure_opts = [
+    local_common_configure_opts + ' -DBUILD_SHARED_LIBS=OFF', # Shared libs off is actually the default for this package.
+    local_common_configure_opts + ' -DBUILD_SHARED_LIBS=ON',
+]
+
+pre_configure_opts = 'module unload rocm && '
+
+#max_parallel = 1
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd ../%(namelower)s-%(version)s && cp LICENSE.md README.md SECURITY.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': [
+        'bin/libxsmm_gemm_generator', 'include/libxsmm.h', 
+        'lib/libxsmm.a', 'lib/libxsmm.%s' % SHLIB_EXT
+    ],
+    'dirs': ['share']
+}
+
+env_mod_category = 'chem'

@@ -1,0 +1,50 @@
+easyblock = 'ConfigureMake'
+
+local_libuv_version =        '1.52.1'        # https://github.com/libuv/libuv/releases  
+
+name =    'libuv'
+version = local_libuv_version
+
+homepage = 'https://libuv.org'
+
+whatis = [
+    'Description: libuv is a multi-platform support library with a focus on asynchronous I/O.'
+]
+
+description = """
+libuv is a multi-platform support library with a focus on asynchronous I/O. 
+It was primarily developed for use by Node.js, but it’s also used by Luvit, 
+Julia, uvloop, and others.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+
+github_account = 'libuv'
+source_urls = [GITHUB_SOURCE]
+sources = [{
+              'download_filename': 'v%(version)s.tar.gz', 
+              'filename': SOURCELOWER_TAR_GZ
+}]
+checksums = ['478baf2599bfbc882c355288c9cb6f92e0e7dda435fa04031fa5b607cf3f414c']
+
+build_deps = [
+    ('buildtools', '%(toolchain_version)s', '', SYSTEM),
+]
+
+pre_configure_opts = './autogen.sh && '
+
+postinstallcmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cp AUTHORS CONTRIBUTING.md ChangeLog LICENSE LICENSE-docs LICENSE-extra README.md SECURITY.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': ['include/uv.h', 'lib/libuv.a', f'lib/libuv.{SHLIB_EXT}', 'lib/pkgconfig/libuv.pc'],
+    'dirs':  []
+}
+
+sanity_check_cmds = [
+    'pkg-config --validate libuv',
+]
+
+env_mod_category = 'lib'

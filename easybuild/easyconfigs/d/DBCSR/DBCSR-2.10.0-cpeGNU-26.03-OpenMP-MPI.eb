@@ -1,0 +1,62 @@
+easyblock = 'CMakeMake'
+
+local_DBCSR_version =        '2.10.0'        # https://github.com/cp2k/dbcsr/releases
+
+local_libxsmm2_version =     '2.0.0'         # https://github.com/libxsmm/libxsmm/releases
+local_libxs_version =        '1.0.0'         # https://github.com/hfp/libxs/releases
+
+name =           'DBCSR'
+version =        local_DBCSR_version
+version_suffix = '-OpenMP-MPI'
+
+homepage = 'https://cp2k.github.io/dbcsr/develop/'
+
+whatis = [
+    'Description: DBCSR is a library for sparse matrix-matrix multiplication with optional GPU acceleration.'
+]
+
+description = """
+DBCSR stands for Distributed Blocked Compressed Sparse Row. DBCSR is a library designed to
+efficiently perform sparse matrix-matrix multiplication, among other operations.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'usempi': True, 'pic': True}
+
+# https://github.com/cp2k/dbcsr/releases/download/v2.10.0/dbcsr-2.10.0.tar.gz
+source_urls = ['https://github.com/cp2k/dbcsr/releases/download/v%(version)s/']
+sources =     [SOURCELOWER_TAR_GZ]
+checksums =   ['3d897220fbb4498215331efad6905eb7744881b4cf04eb5c5fb4db7c48a56ef9']
+
+build_deps = [
+    ('buildtools', '%(toolchain_version)s', '', SYSTEM),
+]
+
+deps = [
+    ('libxsmm', local_libxsmm2_version),
+    ('libxs',   local_libxs_version),#    ('Python', '3.9.6'),
+]
+
+configure_opts = ' '.join([
+    '-DUSE_OPENMP=ON',
+    '-DUSE_MPI=ON -DUSE_MPI_F08=ON',
+    '-DBUILD_TESTING=NO',
+    '-DCMAKE_VERBOSE_MAKEFILE=ON',
+    '-DCMAKE_POSITION_INDEPENDENT_CODE=ON',
+    '-DWITH_EXAMPLES=NO',
+    '-DUSE_LIBXS=ON',
+    '-DUSE_LIBXSMM=ON'
+])
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd ../%(namelower)s-%(version)s && cp AUTHORS LICENSE README.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': ['include/dbcsr_tensor_api.mod', 'include/dbcsr.h', 'lib/libdbcsr.a'],
+    'dirs':  ['lib/cmake/dbcsr'],
+}
+
+env_mod_category = 'chem'
+

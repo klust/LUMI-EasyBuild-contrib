@@ -42,9 +42,19 @@ builddependencies = [
     ('syslibs',    local_LUMI_version, '-static'),
 ]
 
+# The 26.03 container generates an error message in tgmath.h and Gemini suggests this correction:
+# We apply it as it may also occur when the system is upgraded to SLES 15 SP7.
+preconfigopts  = "sed -i 's/#include <tgmath.h>/#include <math.h>/g' ../nvtop-%(version)s/src/plot.c && "
+preconfigopts += "sed -i 's/#include <tgmath.h>/#include <math.h>/g' ../nvtop-%(version)s/src/interface.c && "
+
 configopts  = ' -DUDEV_LIBRARY=/usr/lib64/libudev.so.1'
 configopts += ' -DUDEV_INCLUDE_DIR=%(builddir)s'
-configopts += ' -DCURSES_INCLUDE_PATH=$EBROOTSYSLIBS/include/ncurses'
+configopts += ' -DCURSES_INCLUDE_PATH=$EBROOTSYSLIBS/include'
+
+postinstallcmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd ../%(namelower)s-%(version)s && cp COPYING README.markdown %(installdir)s/share/licenses/%(name)s',   
+]
 
 sanity_check_paths = {
     'files': ['bin/nvtop'],

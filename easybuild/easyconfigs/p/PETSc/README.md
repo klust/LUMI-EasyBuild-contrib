@@ -5,9 +5,21 @@
 -   [GitLab release tags](https://gitlab.com/petsc/petsc/-/tags)
 
 
+## General instructions
+
+PETSc is a toolbox with lots of optional dependencies and we cannot include them all.
+
+Finding out which versions were used by the developers for a certain release, can be done
+via the [config/BuildSystem/config/packages](https://gitlab.com/petsc/petsc/-/tree/main/config/BuildSystem/config/packages)
+subdirectory where you can also select the appropriate tag, e.g.,
+[this version for PETSc 3.25.4](https://gitlab.com/petsc/petsc/-/tree/v3.25.4/config/BuildSystem/config/packages?ref_type=tags).
+
+
 ## EasyBuild
 
--   Simple `ConfigureMake` easyconfig while default PETSc easyblock is not compatibile with LUMI toolchains
+-   [PETSc in the EasyBuilders repository](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/p/PETSc)
+
+-   Simple `ConfigureMake` easyconfig while default PETSc easyblock is not compatible with LUMI toolchains
 
 -   [HPE-Cray PETSc sample build script (TPSL)](https://github.com/Cray/pe-scripts/blob/master/sh/petsc.sh)
 
@@ -52,3 +64,23 @@
 
 -   Straightforward port of the EasyConfig for the CPU version of 3.21.5 in 24.03, 
     only updating the dependencies to sometimes new major versions.
+
+
+### Version 3.25.4 for CPU in 26.03
+
+-   An evolution of the 3.24.2 EasyConfig for CPU in 25.03.
+
+-   Checked some dependencies in [this directory](https://gitlab.com/petsc/petsc/-/tree/v3.25.4/config/BuildSystem/config/packages?ref_type=tags).
+
+-   We've paid particular attention to the precision of METIS/ParMETIS but in
+    the future we may search for forks where ParMETIS does not also include
+    the METIS library in its build (but we would still have to be consistent
+    in the precision for indices and reals).
+
+
+### Version 3.23.7-cpeGNU-26.03-OpenMP-CPU-forYambo
+
+-   Similar to the version 3.23.5 for Yambo in 25.03, but decided to go for a bug fix
+    release.
+
+-   Switched to EB6-compatible parameters in the EasyConfigs.

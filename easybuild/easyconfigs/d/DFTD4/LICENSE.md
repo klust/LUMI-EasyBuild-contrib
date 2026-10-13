@@ -17,3 +17,6 @@ additional terms or conditions.
 
 A copy of the license can be found in
 [the COPYING.LESSER file in the DFT-D4 GitHub repository](https://github.com/dftd4/dftd4/blob/main/COPYING.LESSER).
+
+From LUMI stack release 24.03 onwards, this information can also be found in 
+`$EBROOTDFTD4/share/licenses/dftd4` after installing and loading the module.

@@ -164,6 +164,13 @@ https://develop.openfoam.com/Development/openfoam/-/wikis/building#easybuild
 
 -   A trivial port of the v2312 EasyConfig. Updated CGAL version
 
+-   For 26.03, we switched to EB6-compatible parameters.
+
+
 ### OpenFOAM.org dev 20260130
 
 -   A trivial port of the OpenFOAM 13 EasyConfig
+
+### OpenFOAM.org dev 20260709
+
+-   A trivial port of the OpenFOAM.org dev 20260130 EasyConfig

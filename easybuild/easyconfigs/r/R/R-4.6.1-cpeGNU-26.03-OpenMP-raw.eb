@@ -1,0 +1,147 @@
+#DOC This EasyConfig offers R with only the base R packages and - because it is hard to install properly
+#DOC with Rcmd - Rmpi already pre-installed.
+name =          'R'
+version =       '4.6.1'
+version_suffix = '-OpenMP-raw'
+
+# Dependencies from the central stack
+local_bzip2_version =        '1.0.8'         # http://www.bzip.org/downloads.html
+local_cairo_version =        '1.18.4'        # https://www.cairographics.org/
+local_cURL_version =         '8.21.0'        # https://curl.haxx.se/download/ - Newer than 2026.1?
+local_gzip_version =         '1.14'          # https://ftp.gnu.org/gnu/gzip/
+local_libjpegturbo_version = '3.2.0'         # https://github.com/libjpeg-turbo/libjpeg-turbo/releases
+local_libpng_version =       '1.6.58'        # http://www.libpng.org/pub/png/libpng.html (Not yet in EB 2025a when checking)
+local_libreadline_version =  '8.3.3'         # https://ftp.gnu.org/pub/gnu/readline/, also look at the patches
+local_libtiff_version =      '4.7.2'         # https://download.osgeo.org/libtiff/
+local_ncurses_version =      '6.6'           # https://ftp.gnu.org/pub/gnu/ncurses/
+local_Pango_version =        '1.57.1'        # http://ftp.gnome.org/pub/GNOME/sources/pango/
+local_PCRE2_version =        '10.47'         # https://github.com/PCRE2Project/pcre2/releases  # Not yet in EB 2025a when checked for installation
+local_Tk_version =           '9.0.4'         # https://tcl.tk/
+local_XZ_version =           '5.8.3'         # https://tukaani.org/xz/
+local_zlib_version =         '2.3.3'         # https://github.com/zlib-ng/zlib-ng/releases
+
+# Contrib deps
+local_Zip_version =          '3.0'           # https://infozip.sourceforge.net/Zip.html
+local_UnZip_version =        '6.0'           # https://infozip.sourceforge.net/UnZip.html
+
+homepage = 'https://www.r-project.org/'
+
+whatis = [
+    "Description: R is a free software environment for statistical computing and graphics."
+]
+
+description = """
+This module provides a base R package, without many bells and whistles. 
+A fully-featured R has many deps that do not all make sense on
+the compute nodes of LUMI, in particular when it comes to graphics.
+
+Similarly, the build process as-is will not find a web browser nor
+PDF viewer as these are not currently available on regular compute
+nodes of LUMI.
+
+This version of R links with the multithreaded version of 
+Cray LibSci, so its linear algebra routines support multithreading
+by setting OMP_NUM_THREADS.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'openmp': True}
+
+source_urls = ['https://cloud.r-project.org/src/base/R-%(version_major)s']
+sources =     [SOURCE_TAR_GZ]
+checksums = [
+    '4da6e61d2c0aac5f14a2e7e432cb5fcc269efe83da4293050ba7f03dff4e2cf4',  # R-4.6.1.tar.gz
+]
+# Note: R will not be able to tell which BLAS library was used as it is linked
+# in automatically and does not appear in BLAS_LIBS so that the code in the
+# configure script cannot figure out which BLAS is being used and set
+# r_blas properly.
+
+build_deps = [
+    ('buildtools', '%(toolchain_version)s', '', SYSTEM),
+]
+
+deps = [
+    # Base R
+    ('ncurses',       local_ncurses_version),
+    ('libreadline',   local_libreadline_version),
+    ('zlib',          local_zlib_version),
+    ('bzip2',         local_bzip2_version),
+    ('gzip',          local_gzip_version),
+    ('XZ',            local_XZ_version),
+    ('Info-ZIP',      f'{local_Zip_version}-{local_UnZip_version}'),  # Not really needed as anything in this module is also in the system-installed versions.
+    ('PCRE2',         local_PCRE2_version),    
+    ('cURL',          local_cURL_version),          # for RCurl but also used by the base R package
+    ('X11',           '%(toolchain_version)s'),
+    ('Tk',            local_Tk_version),            # for tcltk (base package)
+    ('libpng',        local_libpng_version),        # for plotting in R
+    ('libjpeg-turbo', local_libjpegturbo_version),  # for plottting in R
+    ('LibTIFF',       local_libtiff_version),
+    ('cairo',         local_cairo_version),
+    ('Pango',         local_Pango_version),
+]
+
+# Some R extensions (mclust, quantreg, waveslim for example) require the math library (-lm) to avoid undefined symbols.
+# Adding it to FLIBS makes sure it is present when needed.
+pre_configure_opts  = 'export FLIBS="$FLIBS -lm" && '
+# We also need to ensure a single Cray LibSci library is used. It looks like R compiles
+# some files with OpenMP if it figures out that the compiler supports OpenMP, but does
+# not add the flag to the link options, resulting in problems with Cray LibSci. Hence
+# we enforce OpenMP and manually add it to the linker flags as that is not done by
+# the build process.
+pre_configure_opts += 'export LDFLAGS="-fopenmp $LDFLAGS" && '
+
+configure_opts = "--with-pic --enable-threads --enable-R-shlib"
+# some recommended packages may fail in a parallel build (e.g. Matrix), and
+# we're installing them anyway below
+configure_opts += " --with-recommended-packages=no"
+
+exts_default_opts = {
+    'source_urls': [
+        'https://cran.r-project.org/src/contrib/Archive/%(name)s',  # package archive
+        'https://cran.r-project.org/src/contrib/',  # current version of packages
+        'https://cran.freestatistics.org/src/contrib',  # mirror alternative for current packages
+    ],
+    'source_tmpl': '%(name)s_%(version)s.tar.gz',
+}
+
+# !! order of packages is important !!
+# packages updated on 6th August 2026
+exts_list = [
+    # include packages that are part of the base installation of R,
+    # both to make sure they are available (via sanity check),
+    # and to be able to pass the check for required deps when installing extensions in parallel
+    'base',
+    'compiler',
+    'datasets',
+    'graphics',
+    'grDevices',
+    'grid',
+    'methods',
+    'parallel',
+    'splines',
+    'stats',
+    'stats4',
+    #'tcltk',  # Not compatible yet with Tcl 9? Tcl 9 does not have a init.tcl.
+    'tools',
+    'utils',
+    #
+    # Do firsts because of potential problems
+    #
+    ('Rmpi', '0.7-3.4', {
+        'easyblock':   'RPackage',
+        'patches':     ['Rmpi-%(version)s_Cray.patch'],
+        'install_opts': '--configure-args="--with-Rmpi-type=CRAY --with-Rmpi-include=$CRAY_MPICH_DIR/include --with-Rmpi-libpath=$CRAY_MPICH_DIR/lib" ',
+        'checksums':   [
+                           '12096db54761e8b3337955b4f3ddb785d1ded2a1cce0b58e50e63e0bc659d464', # Rmpi_0.7-3.4.tar.gz
+                           '910480ee4c154f4618207d54a723378d7fbe270ef4d4fd4c0fe02c75a667a671'  # Rmpi-0.7-3.4_Cray.patch
+                       ],
+    }),
+]
+
+# Set OMP_STACKSIZE to avoid crashes in LibSci
+#env_mod_extra_vars = {
+#    'OMP_STACKSIZE': '256M',
+#}
+
+env_mod_category = 'lang'

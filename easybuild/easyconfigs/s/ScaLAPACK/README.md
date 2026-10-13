@@ -78,4 +78,12 @@
 -   The Cray version had some more trouble and the patch needed to be adapted as one of the
     test directories introduced a compiler flag that was invalid on Cray.
 
+-   For 26.03, we switched to EB6-compatible parameters, improved the sanity checks, and build
+    both static and shared versions of the library.
 
+    We also added an ILP64-variant of the cpeGNU version but couldn't get a cpeCray version
+    to configure.
+
+-   Though there was a version 5.3 when 26.03 was developed, we stuck to 5.1 as we had issues
+    getting libFLAME to build, likely due to the switch to CMake for several of the libraries
+    and the need to find compatible options for all.

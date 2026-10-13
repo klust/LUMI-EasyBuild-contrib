@@ -34,3 +34,8 @@ A library of scalable linear solvers and multigrid methods, used by PETSc.
     developed, to ensure compatibility with the EasyBlock.
 
 -   Furthermore a trivial port of the EasyConfig for 2.31.0 in 24.03.
+
+
+### Version 3.1.0 for cpeGNU 26.03
+
+-   This turned out to be a trivial version update of the 2.33.0 EasyConfig for 25.03.

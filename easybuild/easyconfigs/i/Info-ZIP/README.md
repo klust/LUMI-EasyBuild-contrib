@@ -39,4 +39,5 @@ so this is likely not needed.
     that showed that before already builds where not with the options that we expected.
     The build process of both Zip and UnZip now fully follows the process in the 
     EasyBuilders EasyConfigs.
-  
+
+-   For 26.03, we switched to EB6-compatible parameters.

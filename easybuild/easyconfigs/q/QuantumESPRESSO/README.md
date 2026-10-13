@@ -72,3 +72,24 @@ norm-conserving and ultrasoft).
 
 -   We also employed another patch from the EasyBuilders that claims to fix an issue with symmetrization.
 
+
+### Version 7.5 for CPE 25.03 and 26.03
+
+-   Evolution of the EasyConfig for 7.4.1 for 24.03, also taking into account the EasyBuilders
+    recipe for 7.5.
+
+-   Looks like we need to keep the `.git` directory for other extensions as it seems it may
+    otherwise try to download those again.
+
+-   For 26.03, we switched to EB6-compatible parameters and needed to add a definition to
+    configure with CMake 4.
+
+-   Issues that we noted: 
+
+    -   It has issues with the parallel HDF5 module and instead configures for serial HDF5.
+
+
+### Version 7.5 with GPU support for CPE 25.09
+
+-   Contributed by the EPICURE project and based on instructions they got from the QE
+    developers.

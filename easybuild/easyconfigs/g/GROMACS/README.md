@@ -1,8 +1,8 @@
 # GROMACS
 
-  * [GROMACS web site](http://www.gromacs.org/)
+-   [GROMACS web site](http://www.gromacs.org/)
 
-      * [Check versions via the manual](https://manual.gromacs.org/)
+    -   [Check versions via the manual](https://manual.gromacs.org/)
 
 
 ## GROMACS and PLUMED
@@ -40,53 +40,52 @@ engines.
 
 ## GROMACS and GPU
 
-  * Latest available realease with AMD GPU support is 2024.3
-  * [GROMACS 2023.2 support for AMD GPUs](https://manual.gromacs.org/2023.2/install-guide/index.html#sycl-gpu-acceleration-for-amd-gpus)
-  * [CSC page with example job scripts for GPU](https://docs.csc.fi/apps/gromacs/#example-batch-script-for-lumi-full-gpu-node)
-
+-   [GROMACS 2023.2 support for AMD GPUs](https://manual.gromacs.org/2023.2/install-guide/index.html#sycl-gpu-acceleration-for-amd-gpus)
+-   [CSC page with example job scripts for GPU](https://docs.csc.fi/apps/gromacs/#example-batch-script-for-lumi-full-gpu-node)
+-   From version 2026 onwards, there is an official HIP and official SYCL version.
 
 ## EasyBuild
 
-  * [GROMACS support in the EasyBuilders repository](https://github.com/easybuilders/easybuild-easyconfigs/tree/main/easybuild/easyconfigs/g/GROMACS)
+-   [GROMACS support in the EasyBuilders repository](https://github.com/easybuilders/easybuild-easyconfigs/tree/main/easybuild/easyconfigs/g/GROMACS)
 
-  * [GROMACS support in the CSCS repository](https://github.com/eth-cscs/production/tree/master/easybuild/easyconfigs/g/GROMACS)
+-   [GROMACS support in the CSCS repository](https://github.com/eth-cscs/production/tree/master/easybuild/easyconfigs/g/GROMACS)
 
-  * [GROMACS support in Spack](https://github.com/spack/spack/tree/develop/var/spack/repos/builtin/packages/gromacs)
+-   [GROMACS support in Spack](https://github.com/spack/spack/tree/develop/var/spack/repos/builtin/packages/gromacs)
 
 
 ### Version 2020.6 for CPE 21.08
 
-  * The EasyConfig is a straightforward port of the CSCS one with some information
+-   The EasyConfig is a straightforward port of the CSCS one with some information
     added borrowed from the UAntwerpen EasyConfig.
 
-  * We added a bash function, ``gromacs-completion``, that can be used to turn the
+-   We added a bash function, ``gromacs-completion``, that can be used to turn the
     command completion for GROMACS on.
 
-  * Note that the EasyConfig does not run the GROMACS tests, presumably because they
+-   Note that the EasyConfig does not run the GROMACS tests, presumably because they
     require an mpirun script and/or should be run in the context of a suitable compute
     job.
 
-  * The AMD-version does not support cray-hugepages. Activating this causes the Cray
+-   The AMD-version does not support cray-hugepages. Activating this causes the Cray
     wrapper to add an option to the linker that it does not like.
 
 
 ### Version 2021.3 for CPE 21.08
 
-  * We started from our own EasyConfig for 2020.6 but had to omit ``GMX_PREFER_STATIC_LIBS``
+-   We started from our own EasyConfig for 2020.6 but had to omit ``GMX_PREFER_STATIC_LIBS``
     and add ``BUILD_SHARED_LIBS=ON`` to the CMake options to avoid an error message about
     building GMXAPI.
 
-  * Note that the EasyConfig does not run the GROMACS tests, presumably because they
+-   Note that the EasyConfig does not run the GROMACS tests, presumably because they
     require an mpirun script and/or should be run in the context of a suitable compute
     job.
 
-  * The AMD-version does not support cray-hugepages. Activating this causes the Cray
+-   The AMD-version does not support cray-hugepages. Activating this causes the Cray
     wrapper to add an option to the linker that it does not like.
 
 
 ### Version 2020.4 with PLUMED 2.6.4 for CPE 21.08
 
-  * The integration of the PLUMED patch is based on the CSCS EasyConfigs. We still
+-   The integration of the PLUMED patch is based on the CSCS EasyConfigs. We still
     compile single and double precision versions as the CSCS version does this.
 
     Old documents claim that one should only run GROMACS in double precision when
@@ -95,23 +94,23 @@ engines.
     to avoid numerical problems that can occur in single precision in some of the
     PLUMED routines.
     
-  * Note that it was not possible to get GROMACS 2020.X to work with the cpeGNU 21.12 
+-   Note that it was not possible to get GROMACS 2020.X to work with the cpeGNU 21.12 
     environment which is based on GCC 11.2.0.
 
 
 ### Version 2021.5 for CPE 21.12
 
-  * Compiled with cpeGNU, cpeCray and cpeAOCC but not yet benchmarked.
+-   Compiled with cpeGNU, cpeCray and cpeAOCC but not yet benchmarked.
   
-  * 2020 versions did not work with the GNU compiler in LUMI/21.12
+-   2020 versions did not work with the GNU compiler in LUMI/21.12
   
 
 ### Version 2021.4 with PLUMED 2.7.4 and 2.8.0 for CPE 21.12 and later
 
-  * As PLUMED 2.8.0 is a .0 version, we decided to also offer recipes for the latest
+-   As PLUMED 2.8.0 is a .0 version, we decided to also offer recipes for the latest
     2.7 version at the time of developement.
     
-  * **After the March/April 2023 system update building PLUMED broke so those easyconfigs
+-   **After the March/April 2023 system update building PLUMED broke so those easyconfigs
     were replaced with two versions, one without Python support and one with a different way
     of enabling support for the `cray-python` modules. Therefore the corresponding 
     EasyConfigs of GROMACS have also been replaced.**
@@ -119,20 +118,20 @@ engines.
 
 ### GROMACS-2023-dev-cpeGNU-22.08-MPI-GPU
 
-  * This is an EasyConfig for AMD's own, _unofficial_ HIP-port of GROMACS which is a version
+-   This is an EasyConfig for AMD's own, _unofficial_ HIP-port of GROMACS which is a version
     that is not supported by the main GROMACS developers, who prefer to work with
     SYCL for support for AMD GPUs. It is derived from the container recipes of AMD.
 
 
 ### GROMACS 2023.2 and 2023.3 with AMD GPU support for CPE 22.12
 
-  * There are different choices for building GROMACS with AMD GPU acceleration on LUMI, that follows [installation guide](https://manual.gromacs.org/2023.2/install-guide/index.html#sycl-gpu-acceleration-for-amd-gpus):
-    * Easyconfig files for the 2023.2 release use hipSYCL GPU backend with ROCm v5.2.3
-    * These versions should be only built against AMD easybuild toolchain
-    * MPI versions are recommended to use on LUMI
-       * [HeFFTe](https://manual.gromacs.org/2023.2/install-guide/index.html#using-heffte) variant allows offload to multiple GPUs (relies on rocFFT) with direct GPU communication and PME decomposition across multiple GPUs
-       * [VkFFT](https://manual.gromacs.org/2023.2/install-guide/index.html#using-vkfft) variant is faster but does not support PME decomposition, recommended for a single GPU runs (standalone or ensemble) or in multi GPU runs with exactly one separate PME rank (i.e. `-npme 1` runtime option).
-    * thread-MPI is for a single node use only and does not support direct GPU communication, recommended only for a single GPU use.
+-   There are different choices for building GROMACS with AMD GPU acceleration on LUMI, that follows [installation guide](https://manual.gromacs.org/2023.2/install-guide/index.html#sycl-gpu-acceleration-for-amd-gpus):
+  -   Easyconfig files for the 2023.2 release use hipSYCL GPU backend with ROCm v5.2.3
+  -   These versions should be only built against AMD easybuild toolchain
+  -   MPI versions are recommended to use on LUMI
+     -   [HeFFTe](https://manual.gromacs.org/2023.2/install-guide/index.html#using-heffte) variant allows offload to multiple GPUs (relies on rocFFT) with direct GPU communication and PME decomposition across multiple GPUs
+     -   [VkFFT](https://manual.gromacs.org/2023.2/install-guide/index.html#using-vkfft) variant is faster but does not support PME decomposition, recommended for a single GPU runs (standalone or ensemble) or in multi GPU runs with exactly one separate PME rank (i.e. `-npme 1` runtime option).
+  -   thread-MPI is for a single node use only and does not support direct GPU communication, recommended only for a single GPU use.
  
  
 ### Version 2021.7 for CPE 23.09
@@ -154,7 +153,7 @@ engines.
 
 -   For running on AMD GPUs recommended variants are:
 
-   * Multiple GPUs: AdaptiveCpp 23.10.0 with ROCm 5.4.6 and instant submission (enabled by default)
+ -   Multiple GPUs: AdaptiveCpp 23.10.0 with ROCm 5.4.6 and instant submission (enabled by default)
    
   
 ### Release 2024.3 for CPE 24.03
@@ -222,7 +221,14 @@ engines.
 -   Straightforward port of the EasyConfig for 2025.1 for cpeGNU/24.03.
 
 -   Due to issues with cray-hugepages, we had to disable hugepages support (also in all older
-    easyconfigs)
+    easyconfigs). Later on it could be re-enabled, but only with 2M pages.
+
+-   For 25.09 and 26.03, we switched to EB6-compatible parameters.
+
+-   For 26.03, we switched to Cray MPICH to avoid extra downloads behind the scenes.
+
+    We also added a cpeCray version again to compare both compilers.
+
 
 ### 2026.0 for cpeAMD 25.03 and 25.09
 
@@ -233,3 +239,17 @@ engines.
 
 -   For 25.09 we also added lumi-CrayPath to the dependencies to ensure that the correct MPI and
     LibSci libraries are used.
+
+
+### Version 2026.3 for cpeAMD 26.03
+
+-   As this is only a minor version update, the EasyConfigs are a direct port of those for 2026.0
+    used in 25.03 and 25.09.
+
+
+### Version 2026.3 for CPU for 26.03
+
+-   The EasyConfig is a straightforward port of the one for 2025.4 already prepared for 26.03,
+    so also using Cray FFTW.
+
+-   We also created a cpeCray version to compare both compilers.

@@ -1,0 +1,74 @@
+easyblock = 'CMakeMake'
+
+name =          'Wannier90'
+version =       '4.0.1'
+versionsuffix = '-OpenMP-noMPI'
+
+homepage = 'http://www.wannier.org'
+
+whatis = [
+    'Description: Wannier90 is a code for generating maximally-localized Wannier functions'
+]
+
+description = """
+Wannier90 is an open-source code (released under GPLv2) for generating
+maximally-localized Wannier functions and using them to compute advanced
+electronic properties of materials with high efficiency and accuracy.
+
+Many electronic structure codes have an interface to Wannier90, including
+Quantum ESPRESSO, Abinit, VASP, Siesta, Wien2k, Fleur, OpenMX and GPAW; and
+there are several post-processing codes that are able to use the output of
+Wannier90 for further analysis and calculation.
+
+In all publications resulting from your use of Wannier90, please cite:
+
+[ref] "Wannier90 as a community code: new features and applications",
+      G. Pizzi et al., J. Phys. Cond. Matt. 32, 165902 (2020)
+
+This module was build with with MPI support.
+"""
+
+doc_urls = [
+    'User guide and tutorial:  http://www.wannier.org/support/'
+]
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'usempi': False, 'openmp': True, 'gfortran9-compat': True}
+
+# https://github.com/wannier-developers/wannier90/archive/refs/tags/v4.0.1.tar.gz
+github_account = 'wannier-developers'
+source_urls = [GITHUB_LOWER_SOURCE]
+sources = [{
+    'download_filename' : 'v%(version)s.tar.gz', 
+    'filename'          : SOURCELOWER_TAR_GZ}
+]
+checksums = ['3700372489435fc3165b2b213c22708cc947babd96e652641fad84240191c1dd']  # wannier90-4.0.1.tar.gz
+
+build_deps = [
+    ('buildtools',        '%(toolchain_version)s', '', SYSTEM),
+    ('cray-python',       EXTERNAL_MODULE), # For some reason, CMake needs a recent Python...
+    ('craype-accel-none', EXTERNAL_MODULE)
+]
+
+pre_configure_opts = 'module unload rocm cray-mpich xpmem && '
+
+# Static one needs to be made first as otherwise the shared one is erased.
+configure_opts = [
+    '-DBLAS_LIBRARIES=$CRAY_LIBSCI_PREFIX_DIR/lib/libsci_gnu_mp.so -DWANNIER90_MPI=OFF -DWANNIER90_SHARED_LIBS=OFF',
+    '-DBLAS_LIBRARIES=$CRAY_LIBSCI_PREFIX_DIR/lib/libsci_gnu_mp.so -DWANNIER90_MPI=OFF -DWANNIER90_SHARED_LIBS=ON'
+]
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd ../%(namelower)s-%(version)s && cp CONTRIBUTING.md LICENSE README.install README.rst %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': ['bin/wannier90.x', 'bin/postw90.x', 
+              'lib/libwannier90.a', f'lib/libwannier90.{SHLIB_EXT}',
+              'lib/pkgconfig/wannier90.pc'],
+    'dirs':  ['lib/cmake', 'lib/pkgconfig']
+}
+# For version 4.0.1, the validation of the pkgconfig file failed...
+
+env_mod_category = 'chem'

@@ -1,0 +1,84 @@
+# First version adapted from ScaFaCoS-1.0.4-foss-2025b.eb by Kurt Lust for LUMI.
+#
+# This version of ScaFaCoS is configured to the needs of LAMMPS.
+#
+#DOC This is not a complete installation of ScaFaCoS, but one configured for use in the
+#DOC LAMMPS SCAFACOS module.
+#
+easyblock = 'ConfigureMake'
+
+local_ScaFaCoS_version =     '1.0.4'         # https://github.com/scafacos/scafacos/releases
+
+local_GMP_version =          '6.3.0'         # https://ftp.gnu.org/gnu/gmp/
+local_GSL_version =          '2.8'           # https://ftp.gnu.org/gnu/gsl/
+
+name =           'ScaFaCoS'
+version =        local_ScaFaCoS_version
+version_suffix = '-forLAMMPS'
+
+homepage = 'http://www.scafacos.de/'
+
+whatis = [
+    'Description: ScaFaCoS is a library of scalable fast coulomb solvers.'
+]
+description = """
+ScaFaCoS is a parallel library for solving the Coulomb problem. It
+provides various state-of-the-art methods with a common interface.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {
+    'usempi':           True,
+    'openmp':           True,
+    'gfortran9-compat': True,  # Adds -fallow-argument-mismatch to FCFLAGS
+    'extra_cflags':     '-Wno-implicit-function-declaration'
+}
+
+source_urls = ['https://github.com/%(namelower)s/%(namelower)s/releases/download/v%(version)s']
+sources =     [SOURCELOWER_TAR_GZ]
+checksums = [
+    '6634c4202e825e771d1dd75bbe9cac5cee41136c87653fde98fbd634681c1be6',  # scafacos-1.0.4.tar.gz
+]
+
+build_deps = [
+    ('buildtools',          '%(toolchain_version)s', '', True),
+    ('craype-accel-none',   EXTERNAL_MODULE),
+]
+
+deps = [
+    # Cray deps
+    ('cray-fftw', EXTERNAL_MODULE),
+    # Central stack deps
+    ('GMP',       local_GMP_version),
+    ('GSL',       local_GSL_version, '-OpenMP'), # Want the same version as in LAMMPS, were this will be used.
+]
+
+pre_configure_opts = 'unset F77 && '
+
+configure_opts = ' '.join([
+    '--enable-shared',
+    '--enable-static',
+    '--disable-doc',
+    '--without-internal-fftw',
+    '--with-fftw3-includedir=$FFTW_INC',
+    '--with-fftw3-libdir=$FFTW_DIR',
+    '--enable-fcs-solvers=direct,ewald,fmm,p3m', # Only include the solvers upported for LAMMPS (for p2nfft we need an additonal dependency)
+])
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cp COPYING.GPL COPYING.LGPL README %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': ['lib/libfcs_common.a', f'lib/libfcs_common.{SHLIB_EXT}', 
+              'include/fcs.h', 'include/fcs_module.mod'],
+    'dirs':  [],
+}
+
+sanity_check_cmds = [
+    'pkg-config --validate scafacos',
+    f'pkg-config --exact-version={version} scafacos',
+]
+
+env_mod_category = 'math'

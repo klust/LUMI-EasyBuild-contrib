@@ -1,0 +1,71 @@
+# Created for LUMI by Orian Louant
+# Updated by Kurt Lust.
+
+easyblock = 'CMakeMake'
+
+name =    'nvtop'
+version = '3.3.2'
+
+homepage = 'https://github.com/Syllo/nvtop'
+
+whatis = [
+    'Description: a (h)top like task monitor for AMD, Intel and NVIDIA GPUs'
+]
+
+description = """
+NVTOP stands for Neat Videocard TOP, a (h)top like task monitor for AMD, Intel
+and NVIDIA GPUs. It can handle multiple GPUs and print information about them
+in a htop-familiar way.
+"""
+
+software_license_urls = ['https://github.com/Syllo/nvtop/blob/master/COPYING']
+
+import os
+local_LUMI_version  = os.getenv('LUMI_STACK_VERSION')
+local_libudev_commit = '5d125aae0cc9be0ac5abb8ab8e5081d27e1377a4'
+
+toolchain = SYSTEM
+
+source_urls = ['https://github.com/Syllo/nvtop/archive/refs/tags/']
+sources = ['%(version)s.tar.gz']
+
+patches = [
+    ('libudev.h', '%(builddir)s')
+]
+
+checksums = [
+    '48a295f3b3a917cc851d1aa8b185c09fde3a1b1e741fc57d7fa96b3671271630', # 3.3.2.tar.gz
+    '52f5b345625535c8708cbf46fc9c95e163e1f3455bc964ab426e94c2c54b5a83', # libudev.h
+]
+
+build_deps = [
+    ('buildtools', local_LUMI_version),
+    ('syslibs',    local_LUMI_version, '-static'),
+]
+
+# The 26.03 container generates an error message in tgmath.h and Gemini suggests this correction:
+# We apply it as it may also occur when the system is upgraded to SLES 15 SP7.
+pre_configure_opts  = "sed -i 's/#include <tgmath.h>/#include <math.h>/g' ../nvtop-%(version)s/src/plot.c && "
+pre_configure_opts += "sed -i 's/#include <tgmath.h>/#include <math.h>/g' ../nvtop-%(version)s/src/interface.c && "
+
+configure_opts = ' '.join([
+    '-DUDEV_LIBRARY=/usr/lib64/libudev.so.1',
+    '-DUDEV_INCLUDE_DIR=%(builddir)s',
+    '-DCURSES_INCLUDE_PATH=$EBROOTSYSLIBS/include',
+])
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd ../%(namelower)s-%(version)s && cp COPYING README.markdown %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': ['bin/nvtop'],
+    'dirs':  []
+}
+
+sanity_check_cmds = [
+    'nvtop --version',
+]
+
+env_mod_category = 'tools'

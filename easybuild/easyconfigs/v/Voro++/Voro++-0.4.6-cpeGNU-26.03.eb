@@ -1,0 +1,71 @@
+##
+# Author:    Robert Mijakovic <robert.mijakovic@lxp.lu>
+##
+easyblock = 'ConfigureMake'
+
+local_Voropp_version =       '0.4.6'         # https://math.lbl.gov/voro++/download/
+
+name =    'Voro++'
+version = local_Voropp_version
+
+homepage = 'https://math.lbl.gov/voro++/'
+
+whatis = [
+    'Descriptiont: Voro++ is a software library for carrying out three-dimensional computations of the Voronoi tessellation.'
+]
+
+description = """
+Voro++ is a software library for carrying out three-dimensional computations of
+the Voronoi tessellation. A distinguishing feature of the Voro++ library is that
+it carries out cell-based calculations, computing the Voronoi cell for each
+particle individually. It is particularly well-suited for applications that
+rely on cell-based statistics, where features of Voronoi cells (eg. volume,
+centroid, number of faces) can be used to analyze a system of particles.
+
+Note that this is unmaintained software and we cannot guarantee compatibility
+with future compilers on LUMI.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'pic': True}
+
+# https://math.lbl.gov/voro++/download/dir/voro++-0.4.6.tar.gz
+source_urls = [
+    'https://math.lbl.gov/voro++/download/dir/',
+    'https://download.lammps.org/thirdparty',
+]
+sources =   [SOURCELOWER_TAR_GZ]
+checksums = ['ef7970071ee2ce3800daa8723649ca069dc4c71cc25f0f7d22552387f3ea437e']
+
+build_deps = [
+    ('buildtools',          '%(toolchain_version)s', '', SYSTEM),
+    ('craype-accel-none',   EXTERNAL_MODULE),  # Avoid enabling OpenMP offload
+]
+
+# No configure
+skip_steps = ['configure']
+
+pre_build_opts = 'module unload cray-libsci cray-mpich xpmem rocm && '
+pre_install_opts = pre_build_opts
+
+# Override CXX and CFLAGS variables from Makefile
+build_opts = 'CXX="$CXX" CFLAGS="$CXXFLAGS"'
+
+# Override PREFIX variable from Makefile
+install_opts = "PREFIX=%(installdir)s"
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cp LICENSE NEWS README %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': ['bin/voro++', 'lib/libvoro++.a', 'include/voro++/voro++.hh'],
+    'dirs':  [],
+}
+
+sanity_check_cmds = [
+    'voro++ --help',
+]
+
+env_mod_category = 'math'

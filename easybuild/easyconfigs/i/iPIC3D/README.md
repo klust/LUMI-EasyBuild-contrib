@@ -20,3 +20,4 @@ There is no support for iPIC3D in traditional HPC software installation tools.
 
 -   The EasyConfig is contributed by the [EPICURE project](https://epicure-hpc.eu/)
 
+-   For 26.03, we switched to EB6-compatible parameters.

@@ -32,7 +32,11 @@
 
 -   The EasyConfig is a straightforward port of the one for 7.0.1 in 24.03.
 
+-   Switched to EB6-compatible parameters in 26.03.
+
 
 ### Version 8.0.0 CPU for cpeGNU 25.03
 
 -   The EasyConfig is a straightforward port of the one for 7.2.0 for 25.03.
+
+-   Switched to EB6-compatible parameters in 26.03.

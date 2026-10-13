@@ -47,3 +47,9 @@
 -   Checking the Spack recipe is actually more useful than checking the EasyBuilders
     recipes. It also shows that special versions of METIS or ParMETIS are needed when
     using 64-bit indexing.
+
+
+### Version 9.2.1 for cpe for 26.03
+
+-   Almost straightforward port of the 9.2.0 recipe for 25.03, but had to take into
+    account the new versionsuffixes for ParMETIS modules.

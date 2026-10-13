@@ -1,0 +1,119 @@
+# contributed by Luca Marsella (CSCS)
+# modified for LUMI-G by Peter Larsson
+# Updated to version 2024.2 by Radim Janalik (CSCS)
+# Updated to toolchain 25.03 by Tor SKovsgaard (DeiC)
+# Updated to 26.03 by Kurt Lust
+#
+#DOC CP2K 2026.2 release built with the CMake build system and shared libraries.
+#
+easyblock = 'CMakeMake'
+
+# Dependencies from the central stack
+local_GSL_version =          '2.8'           # https://ftp.gnu.org/gnu/gsl/
+# Dependencies from the user-installable recipes
+local_ELPA_version =         '2026.02.002'   # Moved to contrib
+local_Libint_CP2K_version  = '2.13.1'        # Not always the newest as CP2K testers use an even older version...
+local_libvori_version =      '220621'        # https://brehm-research.de/libvori.php
+local_libxc7_version =       '7.0.0'         # https://gitlab.com/libxc/libxc/-/releases
+local_libxsmm2_version =     '2.0.0'         # https://github.com/libxsmm/libxsmm/releases
+local_libxs_version =        '1.0.0'         # https://github.com/hfp/libxs/releases
+local_DBCSR_version =        '2.10.0'        # https://github.com/cp2k/dbcsr/releases
+local_spglib_version =       '2.7.0'         # https://github.com/spglib/spglib/tags
+local_COSMA28_version =      '2.8.4'         # https://github.com/eth-cscs/COSMA/releases
+local_PLUMED2_10_version =   '2.10.1'        # https://github.com/plumed/plumed2/releases
+
+name =           'CP2K'
+version =        '2026.2'
+version_suffix = '-CPU'
+
+local_archfile_version = ''.join(version.split('.'))
+
+homepage = 'http://www.cp2k.org/'
+
+whatis = [
+    'Description: CP2K is a program to perform atomistic and molecular '
+    'simulations of solid state, liquid, molecular and biological systems.'
+]
+
+description = """
+CP2K is a freely available (GPL) program, written in Fortran 95, to
+perform atomistic and molecular simulations of solid state, liquid,
+molecular and biological systems. It provides a general framework for
+different methods such as e.g. density functional theory (DFT) using a
+mixed Gaussian and plane waves approach (GPW), and classical pair and
+many-body potentials.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'openmp': True, 'usempi': True}
+
+source_urls = ['https://github.com/%(namelower)s/%(namelower)s/releases/download/v%(version)s']
+sources =     [SOURCELOWER_TAR_BZ2]
+checksums =   ['f9bd86f580f57a53a0768c0045d1417f9f9a1d66d851ed7f662f496200043373']
+
+patches = [
+    (f'LUMIC-{local_archfile_version}.psmp', '%(builddir)s/%(namelower)s-%(version)s/arch')
+]
+
+build_deps = [
+    ('buildtools', '%(toolchain_version)s', '', SYSTEM),
+]
+
+deps = [
+    ('cray-fftw',          EXTERNAL_MODULE),
+    ('cray-hdf5-parallel', EXTERNAL_MODULE),
+    ('ELPA',        local_ELPA_version,        version_suffix),
+    ('COSMA',       local_COSMA28_version,     f'{version_suffix}-shared'),
+    ('GSL',         local_GSL_version,         '-OpenMP'),
+    ('Libint-CP2K', local_Libint_CP2K_version, '-lmax-6'),
+    ('libvori',     local_libvori_version),
+    ('libxc',       local_libxc7_version,       '-FHC'),
+    ('libxsmm',     local_libxsmm2_version),
+    ('libxs',       local_libxs_version),
+    ('DBCSR',       local_DBCSR_version,       '-OpenMP-MPI'),
+    ('spglib',      local_spglib_version,      '-OpenMP'),
+    ('PLUMED',      local_PLUMED2_10_version,  '-noPython'),
+]
+
+configure_opts = ' '.join([
+    '-DBUILD_SHARED_LIBS=ON',
+    '-DCP2K_BLAS_VENDOR=SCI',
+    '-DCP2K_SCALAPACK_VENDOR=SCI',
+    '-DCP2K_USE_EVERYTHING=OFF', # We prefer to turn on dependencies rather than turn off.
+    '-DCP2K_USE_MPI=ON',
+    '-DCP2K_USE_FFTW3=ON',
+    '-DCP2K_USE_HDF5=ON',
+    '-DCP2K_USE_LIBINT2=ON',
+    '-DCP2K_USE_LIBXC=ON',
+    '-DCP2K_USE_LIBXS=ON',
+    '-DCP2K_USE_LIBXSMM=ON',
+    '-DCP2K_USE_SPGLIB=ON',
+    '-DCP2K_USE_VORI=ON',
+    '-DCP2K_USE_COSMA=ON',
+    '-DCP2K_USE_ELPA=ON',
+    '-DCP2K_USE_PLUMED=ON',
+])
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd ../%(namelower)s-%(version)s && cp LICENSE README.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': ['bin/%(namelower)s.psmp', f'lib/libcp2k.{SHLIB_EXT}.{version}', 'include/cp2k/libcp2k.h'],
+    'dirs':  [],
+}
+
+sanity_check_cmds = [
+    'pkg-config --validate libcp2k',
+    f'pkg-config --exact-version={version} libcp2k',
+    # Check if all shared libraries are found.
+    'ldd cp2k.psmp | grep -q "not found"; [ $? -eq 1 ]',
+]
+
+# set custom CP2K_DATA_DIR
+env_mod_extra_vars = {
+    'CP2K_DATA_DIR': '%(installdir)s/data'
+}
+
+env_mod_category = 'chem'

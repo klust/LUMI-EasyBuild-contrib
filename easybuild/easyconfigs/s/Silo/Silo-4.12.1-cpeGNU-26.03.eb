@@ -1,0 +1,102 @@
+easyblock = 'CMakeMake'
+
+local_Silo_version =         '4.12.1'        # https://github.com/LLNL/Silo/releases
+
+name =    'Silo'
+version = local_Silo_version
+
+homepage = 'https://wci.llnl.gov/simulation/computer-codes/silo/'
+
+whatis = ['Description: Silo is a library for reading and writing a wide variety of scientific data to binary disk files']
+
+description = """
+Silo is a library for reading and writing a wide variety of scientific data to
+binary disk files. The files Silo produces and the data within them can be easily
+shared and exchanged between wholly independently developed applications running
+on disparate computing platforms. Consequently, Silo facilitates the development
+of general purpose tools for processing scientific data.
+
+Silo supports gridless (point) meshes, structured meshes, unstructured-zoo and
+unstructured-arbitrary-polyhedral meshes, block structured AMR meshes,
+constructive solid geometry (CSG) meshes, piecewise-constant (e.g.,
+zone-centered) and piecewise-linear (e.g. node-centered) variables defined on
+the node, edge, face or volume elements of meshes as well as the decomposition
+of meshes into arbitrary subset hierarchies including materials and mixing
+materials. In addition, Silo supports a wide variety of other useful objects and
+metadata to address various scientific computing application needs. Although the
+Silo library is a serial library, key features enable it to be applied
+effectively in scalable, parallel applications using the Multiple Independent
+File (MIF) parallel I/O paradigm.
+
+Architecturally, the library is divided into two main pieces; an upper-level
+application programming interface (API) and a lower-level I/O implementation
+called a driver. Silo supports multiple I/O drivers. The two most common are the
+HDF5 (Hierarchical Data Format 5) and PDB (Portable DataBase) drivers.
+
+Though the module provides Silo both with and without HDF5 support (and we
+use cray-hdf5-parallel for HDF5 support), the browser and silock apps are
+currently built with the parallel HDF5 version. Change the order of the lines 
+in configure_opts to get a different build (the last one determines the build
+of the applications). 
+"""
+
+doc_urls = ['https://silo.readthedocs.io/']
+software_license_urls = ['https://github.com/LLNL/Silo/blob/main/COPYRIGHT']
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'opt': True, 'pic': True, 'usempi': True}
+
+source_urls = ['https://github.com/LLNL/Silo/releases/download/%(version)s']
+sources =     ['%(namelower)s-%(version)s.tar.xz']
+checksums =   ['9fdf81303b8dc7fab941e365f4156fe48d0bb036cdfdcb59a7c2d218771576b6']
+
+build_deps = [
+    ('buildtools',        '%(toolchain_version)s', '', True),
+    ('craype-accel-none', EXTERNAL_MODULE) # Not an OpenMP offload code, so it is better to unload any accel module that may be loaded.
+]
+
+deps = [
+    ('cray-hdf5-parallel', EXTERNAL_MODULE),
+]
+
+local_common_configure_opts = ' '.join([
+    '-DSILO_ENABLE_SHARED=OFF',
+    '-DSILO_ENABLE_SILOCK=ON',
+    '-DSILO_ENABLE_SILEX=OFF',
+    '-DSILO_ENABLE_BROWSER=ON',
+    '-DSILO_ENABLE_FORTRAN=ON',
+    '-DSILO_ENABLE_JSON=OFF',
+    '-DSILO_ENABLE_PYTHON_MODULE=OFF',
+    '-DSILO_ENABLE_INSTALL_LITE_HEADERS=ON',
+    '-DSILO_BUILD_FOR_BSD_LICENSE=ON',
+    '-DSILO_BUILD_FOR_ASAN=OFF',
+])
+
+configure_opts = [
+    local_common_configure_opts + ' -DSILO_ENABLE_HDF5=OFF -DSILO_ENABLE_SHARED=OFF', # libsilo.a
+    local_common_configure_opts + ' -DSILO_ENABLE_HDF5=ON  -DSILO_ENABLE_SHARED=OFF', # libsiloh5.a
+    local_common_configure_opts + ' -DSILO_ENABLE_HDF5=OFF -DSILO_ENABLE_SHARED=ON',  # libsilo.so
+    local_common_configure_opts + ' -DSILO_ENABLE_HDF5=ON  -DSILO_ENABLE_SHARED=ON',  # libsiloh5.so
+]
+
+post_install_cmds = [
+    # We noted an issue with permissions of the shared libraries.
+    'chmod a+x %(installdir)s/lib/*.so',
+    # Copy the license information.
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd ../%(name)s-%(version)s && cp BSD_LICENSE_README COPYRIGHT README.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': ['bin/browser', 'bin/silock', 'bin/silodiff', 'bin/silofile', 
+              'lib/libsilo.a', 'lib/libsiloh5.a',
+              f'lib/libsilo.{SHLIB_EXT}', f'lib/libsiloh5.{SHLIB_EXT}',
+              'share/licenses/%(name)s/COPYRIGHT'],
+    'dirs':  [],
+}
+
+sanity_check_cmds = [
+    f'browser --version |& grep -q {local_Silo_version}', 
+]
+
+env_mod_category = 'data'

@@ -1,0 +1,64 @@
+#DOC MUMPS compiled with the multi-threaded LibSci libraries, as shared and static libraries.
+
+local_SCOTCH7_version =      '7.0.12'        # https://gforge.inria.fr/projects/scotch/
+local_METIS_version =        '5.1.0'         # https:/http://glaros.dtc.umn.edu/gkhome/metis/metis/download
+
+local_MUMPS_version =        '5.9.1'         # https://mumps-solver.org/index.php?page=dwnld
+
+name =           'MUMPS'
+version =        local_MUMPS_version
+version_suffix = '-OpenMP-METIS-idx32-fp32'
+
+homepage = 'https://graal.ens-lyon.fr/MUMPS/'
+
+whatis = [
+    'Description: A parallel sparse direct solver',
+]
+
+description = """
+MUMPS stands for MUltifrontal Massively Parallel sparse direct Solver.
+
+Both static and shared libraries are provided. This version is compiled 
+with the multi-threaded LibSci libraries.
+
+This version is built with METIS with 32 bit indices and floats to be
+consistent among dependencies of PETSc.
+"""
+
+doc_urls = [
+    'User guide downloadable from https://mumps-solver.org/index.php?page=doc'
+]
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'pic': True, 'usempi': True, 'openmp': True, 'gfortran9-compat': True}
+
+source_urls = ['http://mumps-solver.org/']
+sources = ['%(name)s_%(version)s.tar.gz']
+
+checksums = [
+    {'MUMPS_%(version)s.tar.gz'             : '659c9b57646b5a003ac618baa1faf9dd2044e46c732b3daaccbc7158003e1b46'},
+]
+
+build_deps = [
+    ('buildtools', '%(toolchain_version)s', '', True),
+]
+
+deps = [
+    ('SCOTCH', local_SCOTCH7_version),
+    ('METIS',  local_METIS_version,   '-idx32-fp32'), # To be consistent for all PETSc deps.
+]
+
+max_parallel = 1
+
+build_opts = 'all allshared SONAME_VERSION="%(version)s"'
+
+sanity_check_paths = {
+    'files': ['include/%smumps_%s.h' % (x, y) for x in ['c', 'd', 's', 'z'] for y in ['c', 'struc']] +
+             ['include/mumps_compat.h', 'include/mumps_c_types.h'] +
+             ['lib/lib%smumps.%s' % (x,y) for x in ['c', 'd', 's', 'z'] for y in ['a', SHLIB_EXT]] +
+             ['lib/libmumps_common.a', f'lib/libmumps_common.{SHLIB_EXT}', 
+              'lib/libpord.a', f'lib/libpord.{SHLIB_EXT}'],
+    'dirs':  []
+}
+
+env_mod_category = 'math'

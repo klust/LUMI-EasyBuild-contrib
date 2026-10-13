@@ -30,3 +30,12 @@
     We also checked for better sanity checks, but as even the help option already
     returns an error code, this is hard to check until we have an actual issue
     and can see how that differs from the regular behaviour.
+
+
+### Version 0.9.7 for cpeGNU/26.03
+
+-   Straightforward port of the 0.9.4 EasyConfig for 25.03, but with 
+    EB6-compatible parameters.
+
+-   We did implement better sanity checks and simply check for the strange exit
+    codes which still enables us to check if all shared libraries are found.

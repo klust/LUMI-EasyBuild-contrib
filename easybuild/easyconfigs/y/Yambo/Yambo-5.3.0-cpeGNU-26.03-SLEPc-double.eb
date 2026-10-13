@@ -1,0 +1,156 @@
+#DOC This is the CPU version of Yambo with SLEPc, in double precision.
+#DOC The configuration is based on one from the EasyBuilders repository that was made with the help of the Yambo authors.
+#
+# Developed by Kurt Lust
+# Based on an EasyBuilders EasyConfig by
+# Author: Nicola Spallanzani <nicola.spallanzani@cnr.it>
+# Author: Sergio Orlandini <s.orlandini@cineca.it>
+# Author: Maria Montagna <m.montagna@cineca.it>
+##
+
+easyblock = 'ConfigureMake'
+
+local_libxc_version = '6.2.2'      # Yambo only tested with 5.2.3, but this version used in an EasyConfig by the authors of Yambo
+local_DeviceXLib_version =   '0.9.1'         # https://gitlab.com/max-centre/components/devicexlib/-/tags
+local_PETSc_version = '3.23.7'     # Yambo only tested with 3.22.0, but this version used in an EasyConfig by the authors of Yambo
+local_SLEPc_version = '3.23.3'     # Yambo only tested with 3.22.0, but this version used in an EasyConfig by the authors of Yambo
+
+name =          'Yambo'
+version =       '5.3.0'
+version_suffix = '-SLEPc-double'
+
+homepage = 'http://www.yambo-code.org'
+
+whatis = ['Description: Yambo, "Yet Another Many-Body cOde"']
+
+description = """
+YAMBO is an open-source code released within the GPL licence implementing
+first-principles methods based on Green's function theory to describe
+excited-state properties of realistic materials.These methods include the GW
+approximation, the Bethe-Salpeter equation (BSE), electron-phonon interaction
+and non-equilibrium Green's function theory (NEGF).
+
+YAMBO relies on previously computed ground-state properties and for this reason
+it is interfaced with other density functional theory (DFT) codes.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {
+    'openmp':           True, 
+    'usempi':           True, 
+    'gfortran9-compat': True,
+    'extra_fcflags':    '-fno-lto',
+    'extra_fflags':     '-fno-lto',
+}
+
+local_yambo_ext_cmd  = 'mkdir yambo-%(version)s && '
+local_yambo_ext_cmd += 'tar --strip-components=1 -xzf %s -C yambo-%(version)s'
+
+source_urls = ['https://github.com/yambo-code/yambo/archive/']
+sources = [
+    {
+        'download_filename': '%(version)s.tar.gz',
+        'filename': 'yambo-%(version)s.tar.gz',
+        'extract_cmd': local_yambo_ext_cmd,
+    },
+    {
+        # see https://github.com/yambo-code/yambo/wiki/Libraries#external-libraries
+        'source_urls': ['https://github.com/yambo-code/yambo-libraries/raw/refs/heads/master/external/'],
+        'filename': 'iotk-y1.2.2.tar.gz',
+        'extract_cmd': 'cp %s yambo-%(version)s/lib/archive/',
+    },
+]
+patches = [
+    'Yambo-5.3_fix-timing.patch',
+    'Yambo-5.3_petsc-slepc-3.23.patch',
+]
+checksums = [
+    {'yambo-5.3.0.tar.gz': '97b6867c28af6ea690bb02446745e817adcedf95bcd568f132ef3510abbb1cfe'},
+    {'iotk-y1.2.2.tar.gz': '64af6a4b98f3b62fcec603e4e1b00ef994f95a0efa53ab6593ebcfe6de1739ef'},
+    {'Yambo-5.3_fix-timing.patch': '9c332a1e548dee20639696755de48c335bc4927feec0cd82f7c331c8aa054b7f'},
+    {'Yambo-5.3_petsc-slepc-3.23.patch': '5361808d4aef593c9728a1ae172978a17c3546d94cd837f2beffa32e8da460b4'},
+]
+
+build_deps = [
+    ('buildtools', '%(toolchain_version)s', '', True),
+]
+
+deps = [
+    ('cray-libsci',              EXTERNAL_MODULE),
+    ('cray-fftw',                EXTERNAL_MODULE),
+    ('cray-hdf5-parallel',       EXTERNAL_MODULE),
+    ('cray-netcdf-hdf5parallel', EXTERNAL_MODULE),
+    ('libxc',                    local_libxc_version),
+    ('DeviceXlib',               local_DeviceXLib_version, '-OpenMP-CPU'),
+    ('PETSc',                    local_PETSc_version,      '-OpenMP-CPU-forYambo'),
+    ('SLEPc',                    local_SLEPc_version,      '-OpenMP-CPU-forYambo'),
+]
+
+pre_configure_opts = ' && '.join([
+    'sed -i "s/-ansi/-traditional/" configure',
+    'sed -i "s/\*ftn\* |//" configure',
+    'rm -rf %(installdir)s/*',
+    'export CPP="cpp -P"',
+    'export FPP="cpp -P -traditional"',
+]) + ' && '
+
+configure_opts = ' '.join([
+    '--enable-mpi',
+    '--enable-open-mp',
+    '--enable-hdf5-par-io',
+    '--enable-msgs-comps',
+    #'--enable-cuda-fortran=no',
+    '--with-blas-libs="-L$CRAY_LIBSCI_PREFIX/lib -lsci_gnu_mp"',
+    '--with-lapack-libs="-L$CRAY_LIBSCI_PREFIX/lib -lsci_gnu_mp"',
+    '--with-scalapack-libs="-L$CRAY_LIBSCI_PREFIX/lib -lsci_gnu_mpi_mp"',
+    '--with-blacs-libs="-L$CRAY_LIBSCI_PREFIX/lib -lsci_gnu_mp"',
+    '--with-fft-path="$FFTW_ROOT"',
+    '--with-fft-libs="-L$EBROOTFFTW/lib -lfftw3_mpi -lfftw3_omp"',
+    '--with-fft-libdir="$EBROOTFFTW/lib"',
+    '--with-fft-includedir="$EBROOTFFTW/include"',
+    '--with-netcdf-path="$EBROOTNETCDF"',
+    '--with-netcdff-path="$EBROOTNETCDFMINFORTRAN"',
+    '--with-hdf5-path="$EBROOTHDF5"',
+    '--with-libxc-path="$EBROOTLIBXC"',
+    '--with-devxlib-path="$EBROOTDEVICEXLIB"',
+    '--with-libxc-libs="-L$EBROOTLIBXC/lib64 -lxcf90 -lxcf03 -lxc"',
+    '--with-libxc-libdir="$EBROOTLIBXC/lib64"',
+    '--with-libxc-includedir="$EBROOTLIBXC/include"',
+    '--enable-par-linalg',
+    '--enable-slepc-linalg',
+    '--with-petsc-path="$EBROOTPETSC"',
+    '--with-slepc-path="$EBROOTSLEPC"',
+    '--enable-dp',
+])
+
+pre_build_opts = 'unset LIBS && '
+
+build_opts = 'all'
+
+skip_steps = ['install']
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cp AUTHORS COPYING ISSUES README.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+local_extensions = ['', '_nl', '_ph', '_rt', '_sc']
+
+sanity_check_paths = {
+    'files': ['bin/a2y', 'bin/c2y', 'bin/p2y'] +
+             ['bin/yambo%s' % x for x in local_extensions] +
+             ['bin/ypp%s' % x for x in local_extensions],
+    'dirs':  ['bin']
+}
+
+sanity_check_cmds = [
+    'yambo%s -h' % x for x in local_extensions
+] + [
+    'ypp%s -h' % x for x in local_extensions
+] + [
+    'a2y -h',
+    'c2y -h',
+    'p2y -h'
+]
+
+env_mod_category = 'phys'

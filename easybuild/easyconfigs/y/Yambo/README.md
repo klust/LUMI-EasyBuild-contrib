@@ -46,8 +46,17 @@
     that we didn't see similar issues in previous versions of Yambo.
 
 
-### 5.3.0-cpeGNU-25.03-SLEPc-double, CPU-only
+### 5.3.0-cpeGNU-25.03-SLEPc-double, CPU-only and 5.3.0-cpeGNU-26.03-SLEPc-double, CPU-only
 
 -   The EasyConfig builds on the EasyConfig for 5.2.4 in 25.03 and combines with the configuration
     used for 5.3.0 with SLEPc in the foss toolchains in the EasyBuilders repository (as the latter
     was co-developed by the Yambo developers and hence is likely OK).
+
+-   Used bug fix releases of the same PETSc and SLEPc release for 26.03 and switched to EB6-compatible
+    parameters.
+
+
+### 5.3.0-cpeGNU-26.03, CPU-only
+
+-   Derived from 5.3.0-cpeGNU-26.03-SLEPc-double and Yambo-5.3.0-foss-2024a.eb, so hopefully OK as
+    these were co-developed with the developers.

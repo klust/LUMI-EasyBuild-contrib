@@ -19,3 +19,13 @@
 
 -   The EasyConfig is based on the one from the EasyBuilders, but adapted to the LUMI
     toolchains.
+
+
+### Version 0.5.2 for 26.03
+
+-   The EasyConfig is a straightforward port of the one for 0.5.0 in 25.03, but we switched
+    to EB6-compatible parameters and implemented more robust sanity checks.
+
+-   NOTE: We tried a cpeCray version, but that one fails in one test in the test step, so
+    the EasyConfig was not yet added. Substitute `cpeGNU` for `cpeCray` and build with
+    `--skip-test-step` or `--ignore-test-failure` if you want to try anyway.

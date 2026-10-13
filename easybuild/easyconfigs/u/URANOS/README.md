@@ -14,3 +14,5 @@ tools for HPC software.
 ### Version 20260515
 
 -   The EasyConfig is developed in the [EPICURE project](https://epicure-hpc.eu/)
+
+-   For 26.03, we switched to the EB6-compatible parameters.

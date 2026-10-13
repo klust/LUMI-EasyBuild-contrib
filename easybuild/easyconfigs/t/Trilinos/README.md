@@ -15,7 +15,7 @@
 
 -   There is no support for Trilinos in the CSCS repository
 
--   [Trilinos in Spack](https://spack.readthedocs.io/en/latest/package_list.html#trilinos)
+-   [Trilinos in Spack](https://packages.spack.io/package.html?name=trilinos)
 
 
 ### Version 12.18.1 for cpeGNU (archived)
@@ -61,3 +61,5 @@
     
 -   For 25.03: It turned out that the variables used to point to netCDF were the wrong ones;
     they have been changed.
+
+-   For 26.03: Switch to EB6-compatible EasyConfig parameters.

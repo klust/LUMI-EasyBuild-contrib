@@ -6,6 +6,8 @@
 
 -   [Regular Libint GitHub](https://github.com/evaleev/libint)
 
+    -   [GitHub releases](https://github.com/evaleev/libint/releases)
+
 
 ## EasyBuild
 
@@ -27,3 +29,13 @@
 -   Kept in 25.03 also due to uncertainties about compatibility of newer versions with
     CP2K. In fact, the CP2K authors still test with 2.6.0, but the EasyBuilders use
     2.7.2.
+
+
+### Version 2.13.1
+
+-   Libint has changed to a CMake build process. Also, it is not clear which options are exactly
+    needed for CP2K. Therefore we decided to switch to a different approach and work with 
+    downloads prepared specifically for CP2K by
+    [analysing the CP2K build script for Libint](https://github.com/cp2k/cp2k/blob/v2026.2/tools/toolchain/scripts/stage3/install_libint.sh).
+
+-   The `CMakeMake` EasyConfig is a LUST development evolved from the non-CMake one for 2.7.2 in 25.03.

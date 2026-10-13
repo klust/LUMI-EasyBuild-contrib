@@ -1,0 +1,74 @@
+#DOC CPU-only version with OpenMP support enabled.
+##
+# Author: Nicola Spallanzani <nicola.spallanzani@cnr.it>
+# Author: Sergio Orlandini <s.orlandini@cineca.it>
+# Author: Maria Montagna <m.montagna@cineca.it>
+# Adapted for LUMI by Kurt Lust
+##
+
+easyblock = 'ConfigureMake'
+
+local_DeviceXLib_version =   '0.9.1'         # https://gitlab.com/max-centre/components/devicexlib/-/tags
+
+name =           'DeviceXlib'
+version =        local_DeviceXLib_version
+version_suffix = '-OpenMP-CPU'
+
+homepage = 'https://gitlab.com/max-centre/components/devicexlib'
+
+whatis = ['Description: fortran library wrapping device-oriented routines and utilities"']
+
+description = """
+DeviceXlib is a library that wraps device-oriented routines and utilities, such as device
+data allocation, host-device data transfers. deviceXlib supports CUDA language, together
+with OpenACC and OpenMP programming paradigms. deviceXlib wraps a subset of functions from
+Nvidia cuBLAS, Intel oneMKL BLAS and AMD rocBLAS libraries.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {
+    'openmp':           True,
+    'debug':            True, 
+    'opt':              True,
+    'gfortran9-compat': True, # Adds -fallow-argument-mismatch
+    'extra_f90flags':   '-cpp'
+}
+
+source_urls = ['https://gitlab.com/max-centre/components/devicexlib/-/archive/%(version)s/']
+sources =     ['devicexlib-%(version)s.tar.gz']
+checksums =   ['900fe8b0849d451e7c541d00a1b92c723e0969bae47ebcabd295e14ebcc17d1e']
+
+build_deps = [
+    ('buildtools', '%(toolchain_version)s', '', True),
+]
+
+pre_configure_opts = ' && '.join([
+    'export CPP="cpp -P"',
+    'export FPP="cpp -P -traditional"',
+    'export LDFLAGS="-g -pthread -fopenmp"',
+]) + ' && '
+
+configure_opts = ' '.join([
+    '--enable-openmp',
+    '--enable-parallel=no',
+    '--disable-cuda-env-check',
+    '--with-blas-libs="-L$CRAY_LIBSCI_PREFIX/lib -lsci_gnu_mp"',
+])
+
+build_opts = 'all'
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cp LICENSE.txt README.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+local_test_bins = ['buffer', 'linalg', 'malloc', 'mapping', 'memcpy_async', 'memcpy', 'memset', 'pinned']
+
+sanity_check_paths = {
+    'files': [f'bin/test_{b}.x' for b in local_test_bins] + ['lib/libdevXlib.a'],
+    'dirs':  [],
+}
+
+sanity_check_cmds = [f'test_{b}.x' for b in local_test_bins]
+
+env_mod_category = 'lib'

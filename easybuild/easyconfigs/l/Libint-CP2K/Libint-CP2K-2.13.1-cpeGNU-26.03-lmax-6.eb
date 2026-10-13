@@ -1,0 +1,69 @@
+# Created for LUMI by Orian Louant
+easyblock = 'CMakeMake'
+
+local_LibInt_CP2K_version = '2.13.1'
+local_lmax = '6' # Number from 4 to 7.
+
+local_Boost_version =        '1.90.0'        # https://www.boost.org/
+local_GMP_version =          '6.3.0'         # https://ftp.gnu.org/gnu/gmp/
+local_Eigen_version =        '5.0.1'         # https://gitlab.com/libeigen/eigen/-/releases
+
+name =           'Libint-CP2K'
+version =        local_LibInt_CP2K_version
+version_suffix = f'-lmax-{local_lmax}'
+
+homepage = 'https://github.com/evaleev/libint'
+
+whatis = [
+    'Description: Libint is a library for computing Gaussian integrals in quantum mechanics',
+]
+
+description = """
+Libint in a library for the evaluation of molecular integrals of many-body
+operators over Gaussian functions.
+
+Libint-CP2K is a version specifically configured for CP2K and prepared by
+the CP2K developers.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'opt': True, 'pic': True}
+
+# https://www.cp2k.org/static/downloads/libint-v2.13.1-cp2k-lmax-6.tar.xz
+source_urls = ['https://www.cp2k.org/static/downloads']
+sources =     [f'libint-v{version}-cp2k-lmax-{local_lmax}.tar.xz']
+checksums =   ['a7990c4862d549e6328596f20b8a7ece40ded396b953d5d5d7c3200f13e37429']
+
+build_deps = [
+    ('buildtools',          '%(toolchain_version)s', '', SYSTEM),
+    ('craype-network-none', EXTERNAL_MODULE),
+    ('craype-accel-none',   EXTERNAL_MODULE),
+    ('cray-python',         EXTERNAL_MODULE),
+    ('Eigen',               local_Eigen_version, '', SYSTEM),
+    ('Boost',               local_Boost_version),
+    ('GMP',                 local_GMP_version),
+]
+
+pre_configure_opts = 'module unload rocm cray-libsci && '
+pre_build_opts = pre_configure_opts
+
+configure_opts = ' '.join([
+    '-DLIBINT2_ENABLE_FORTRAN=ON',
+    '-DLIBINT2_ENABLE_PYTHON=OFF',
+    '-DBUILD_TESTING=OFF',
+])
+
+run_test = False
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    f'cd ../libint-v{version}-cp2k-lmax-{local_lmax} && cp CITATION COPYING COPYING.LESSER INSTALL.md LICENSE README.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': ['lib/libint2.a', 'include/libint2.h', 'include/libint2.hpp', 'include/libint_f.mod'],
+    'dirs':  ['lib/cmake'],
+}
+
+
+env_mod_category = 'chem'

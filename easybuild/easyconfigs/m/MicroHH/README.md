@@ -11,6 +11,10 @@ the time of writing).
 
 -   [MicroHH User Guide](https://microhh.readthedocs.io/en/latest/)
 
+-   [MicroHH on GitHub](https://github.com/microhh/microhh)
+
+    -   [GitHub releases](https://github.com/microhh/microhh/releases)
+
 
 ## EasyBuild
 
@@ -29,3 +33,16 @@ the time of writing).
     with GNU compiler version 25.03.
 
     This version also adds some testing in the "testing" step.
+
+
+### Version 2.0.2 for cpeGNU/26.03
+
+-   A trivial update of the 2.0.1 EasyConfig for 25.03.
+
+-   We had issues with the download if it was stored as a `.tar.xz` file which got stuck,
+    so for now we only store as a `.tar` file without checksums as they appeared to not be
+    reproducible.
+
+-   Switched to EB6-compatible parameters in the EasyConfig.
+
+-   Added license information to the installation.

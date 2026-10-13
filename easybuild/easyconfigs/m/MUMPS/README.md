@@ -33,5 +33,9 @@
 -   The EasyConfig is a direct port of the 5.8.1 one for cpeGNU 25.03, but we 
     switched to EB6-compatible parameters.
 
+-   We now also always build static and shared libraries (and it turns out that 
+    this was possible with 5.8.1 also). The trick was found in an EasyBuilders
+    EasyConfig (use the right make targets in `buildopts`).
+
 -   The new `-idx32-fp64` version of METIS is the one that corresponds to the
     old one without versionsuffix.

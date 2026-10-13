@@ -1,0 +1,380 @@
+#DOC This EasyConfig provides R compiled with the multithreaded LibSci libraries (hence the -OpenMP suffix)
+#DOC and with packages for parallel computing and other packages offered by Cray-R already installed.
+#DOC It also contains some packages for benchmarking.
+name =          'R'
+version =       '4.6.1'
+version_suffix = '-OpenMP'
+
+local_bzip2_version =        '1.0.8'         # http://www.bzip.org/downloads.html
+local_cairo_version =        '1.18.4'        # https://www.cairographics.org/
+local_cURL_version =         '8.21.0'        # https://curl.haxx.se/download/ - Newer than 2026.1?
+local_gzip_version =         '1.14'          # https://ftp.gnu.org/gnu/gzip/
+local_libjpegturbo_version = '3.2.0'         # https://github.com/libjpeg-turbo/libjpeg-turbo/releases
+local_libpng_version =       '1.6.58'        # http://www.libpng.org/pub/png/libpng.html (Not yet in EB 2025a when checking)
+local_libreadline_version =  '8.3.3'         # https://ftp.gnu.org/pub/gnu/readline/, also look at the patches
+local_libtiff_version =      '4.7.2'         # https://download.osgeo.org/libtiff/
+local_ncurses_version =      '6.6'           # https://ftp.gnu.org/pub/gnu/ncurses/
+local_Pango_version =        '1.57.1'        # http://ftp.gnome.org/pub/GNOME/sources/pango/
+local_PCRE2_version =        '10.47'         # https://github.com/PCRE2Project/pcre2/releases  # Not yet in EB 2025a when checked for installation
+local_Tk_version =           '9.0.4'         # https://tcl.tk/
+local_XZ_version =           '5.8.3'         # https://tukaani.org/xz/
+local_zlib_version =         '2.3.3'         # https://github.com/zlib-ng/zlib-ng/releases
+
+local_cURL_version =         '8.21.0'        # https://curl.haxx.se/download/ - Newer than 2026.1?
+local_libuv_version =        '1.52.1'        # https://github.com/libuv/libuv/releases  
+
+local_Zip_version =          '3.0'           # https://infozip.sourceforge.net/Zip.html
+local_UnZip_version =        '6.0'           # https://infozip.sourceforge.net/UnZip.html
+
+homepage = 'https://www.r-project.org/'
+
+whatis = [
+    "Description: R is a free software environment for statistical computing and graphics."
+]
+
+description = """
+This module provides a base R package, without many bells and whistles. 
+A fully-featured R has many deps that do not all make sense on
+the compute nodes of LUMI, in particular when it comes to graphics.
+
+Similarly, the build process as-is will not find a web browser nor
+PDF viewer as these are not currently available on regular compute
+nodes of LUMI.
+
+This version of R links with the multithreaded version of 
+Cray LibSci, so its linear algebra routines support multithreading
+by setting OMP_NUM_THREADS.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'openmp': True}
+
+source_urls = ['https://cloud.r-project.org/src/base/R-%(version_major)s']
+sources =     [SOURCE_TAR_GZ]
+checksums = [
+    '4da6e61d2c0aac5f14a2e7e432cb5fcc269efe83da4293050ba7f03dff4e2cf4',  # R-4.6.1.tar.gz
+]
+# Note: R will not be able to tell which BLAS library was used as it is linked
+# in automatically and does not appear in BLAS_LIBS so that the code in the
+# configure script cannot figure out which BLAS is being used and set
+# r_blas properly.
+
+build_deps = [
+    ('buildtools', '%(toolchain_version)s', '', SYSTEM),
+]
+
+deps = [
+    # Base R
+    ('ncurses',       local_ncurses_version),
+    ('libreadline',   local_libreadline_version),
+    ('zlib',          local_zlib_version),
+    ('bzip2',         local_bzip2_version),
+    ('gzip',          local_gzip_version),
+    ('XZ',            local_XZ_version),
+    ('Info-ZIP',      f'{local_Zip_version}-{local_UnZip_version}'),  # Not really needed as anything in this module is also in the system-installed versions.
+    ('PCRE2',         local_PCRE2_version),    
+    ('cURL',          local_cURL_version),          # for RCurl but also used by the base R package
+    ('X11',           '%(toolchain_version)s'),
+    ('Tk',            local_Tk_version),            # for tcltk (base package)
+    ('libpng',        local_libpng_version),        # for plotting in R
+    ('libjpeg-turbo', local_libjpegturbo_version),  # for plottting in R
+    ('LibTIFF',       local_libtiff_version),
+    ('cairo',         local_cairo_version),
+    ('Pango',         local_Pango_version),
+    # For extra packages
+    ('cURL',           local_cURL_version),
+    ('libuv',          local_libuv_version),
+]
+
+# Some R extensions (mclust, quantreg, waveslim for example) require the math library (-lm) to avoid undefined symbols.
+# Adding it to FLIBS makes sure it is present when needed.
+pre_configure_opts  = 'export FLIBS="$FLIBS -lm" && '
+# We also need to ensure a single Cray LibSci library is used. It looks like R compiles
+# some files with OpenMP if it figures out that the compiler supports OpenMP, but does
+# not add the flag to the link options, resulting in problems with Cray LibSci. Hence
+# we enforce OpenMP and manually add it to the linker flags as that is not done by
+# the build process.
+pre_configure_opts += 'export LDFLAGS="-fopenmp $LDFLAGS" && '
+
+configure_opts = "--with-pic --enable-threads --enable-R-shlib"
+# some recommended packages may fail in a parallel build (e.g. Matrix), and
+# we're installing them anyway below
+configure_opts += " --with-recommended-packages=no"
+
+exts_default_opts = {
+    'source_urls': [
+        'https://cran.r-project.org/src/contrib/Archive/%(name)s',  # package archive
+        'https://cran.r-project.org/src/contrib/',  # current version of packages
+        'https://cran.freestatistics.org/src/contrib',  # mirror alternative for current packages
+    ],
+    'source_tmpl': '%(name)s_%(version)s.tar.gz',
+}
+
+# !! order of packages is important !!
+# packages updated on 6th August 2026
+exts_list = [
+    # include packages that are part of the base installation of R,
+    # both to make sure they are available (via sanity check),
+    # and to be able to pass the check for required deps when installing extensions in parallel
+    'base',
+    'compiler',
+    'datasets',
+    'graphics',
+    'grDevices',
+    'grid',
+    'methods',
+    'parallel',
+    'splines',
+    'stats',
+    'stats4',
+    #'tcltk',  # Not compatible yet with Tcl 9? Tcl 9 does not have a init.tcl.
+    'tools',
+    'utils',
+    #
+    # Do Rmpi first because of potential problems
+    #
+    #
+    # Parallel compputing packages
+    #
+    ('Rmpi', '0.7-3.4', {
+        'easyblock':   'RPackage',
+        'patches':     ['Rmpi-%(version)s_Cray.patch'],
+        'install_opts': '--configure-args="--with-Rmpi-type=CRAY --with-Rmpi-include=$CRAY_MPICH_DIR/include --with-Rmpi-libpath=$CRAY_MPICH_DIR/lib" ',
+        'checksums':   [
+                           '12096db54761e8b3337955b4f3ddb785d1ded2a1cce0b58e50e63e0bc659d464', # Rmpi_0.7-3.4.tar.gz
+                           '910480ee4c154f4618207d54a723378d7fbe270ef4d4fd4c0fe02c75a667a671'  # Rmpi-0.7-3.4_Cray.patch
+                       ],
+    }),
+    ('Rcpp', '1.1.2', {
+        'checksums': ['2746cf2fb188e5f0a84dbf5c8f68915b54564ed33e5754572f174e7b32e7f4f3'], 
+    }),
+    ('codetools', '0.2-20', {
+        'checksums': ['3be6f375ec178723ddfd559d1e8e85bfeee04a5fbaf9f53f2f844e1669fea863'],
+    }),
+    ('RUnit', '0.4.33.1', {
+        'checksums': ['8528fa3ba8d04a6e71783f01ba3e1163b5900c6b3c2bc81bad2349e220197f05'],
+    }),
+    ('tinytest', '1.4.3', {
+        'checksums': ['ecc3a398690e72ca70127c1177e1f78b602dc5062f1597b897255bcc33c38375'],
+    }),
+    ('backports', '1.5.1', {
+        'checksums': ['b8eeeabe3c27e1486f43e0b18dae57f0e870dd7c6979d3668df76bf0d4735bad'],
+    }),
+    ('rlang', '1.3.0', {
+        'checksums': ['80aa537d49e72265f443a15e8936128af583caa5e572086518b503cbf064279c'],
+    }),
+    ('parallelly', '1.48.0', {
+        'checksums': ['58fe71ccee8e4dc95591958c5428c5000350937024373b99b258a76da0927636'],
+    }),
+    ('iterators', '1.0.14', {
+        'checksums': ['cef3075a0930e1408c764e4da56bbadd4f7d14315809df8f38dd51f80ccc677b'],
+    }),
+    ('foreach', '1.5.2', {
+        'checksums': ['56338d8753f9f68f262cf532fd8a6d0fe25a71a2ff0107f3ce378feb926bafe4'],
+    }),
+    ('doParallel', '1.0.17', {
+        'checksums': ['b96a25ad105a654d70c7b4ca27290dc9967bc47f4668b2763927a886b178abd7'],
+    }),
+    ('doMPI', '0.2.2', {
+        'checksums': ['68a45715690f50ebb121ee868634ff269e8f9636599b8dd8f601bf714fa81c2a'],
+    }),
+    ('snow', '0.4-4', {
+        'checksums': ['84587f46f222a96f3e2fde10ad6ec6ddbd878f4e917cd926d632f61a87db13c9'],
+    }),
+    ('snowfall', '1.84-6.3', {
+        'checksums': ['2641932b01041e34b7afb1261f649755b4c8d6560080e0e2ee549ffdf3b8b143'],
+    }),
+    ('doSNOW', '1.0.20', {
+        'checksums': ['917cabed166aa2d1ec291691c17e1e3d344e858543e1682e3a442cc0c504bbb8'],
+    }),
+    ('base64url', '1.4', {
+        'checksums': ['1d058f138660e9155ebb331d7a2561e2541ee3321b8da90f6c41fd8dcc122c58'],
+    }),
+    ('brew', '1.0-10', {
+        'checksums': ['4181f7334e032ae0775c5dec49d6137eb25d5430ca3792d321793307b3dda38f'],
+    }),
+    ('checkmate', '2.3.4', {
+        'checksums': ['95e1068dee07d95c5e616dfd66e622cf245821acd358a77e790118c34ebd85ca'],
+    }),
+    ('data.table', '1.18.4', {
+        'checksums': ['d65256f0050a6443770d5982b5098a2a8c894f9675ed17053416c7815cbddeb9'],
+    }),
+    ('fs', '2.1.0', {
+        'checksums': ['7088af1117d65c4ceb144b532e323f197fc8243b1d704bf6edf40774789829cd'],
+    }),
+    ('cli', '3.6.6', {
+        'checksums': ['b2b58d6dd82f5798b335e39c00591686a01fd3e94399ef898e146173e36f18f9'],
+    }),
+    ('glue', '1.8.1', {
+        'checksums': ['1c55905d3efc3d5c199ceb0bd12218e97f0d4c64df6038ff41ecef415478a122'],
+    }),
+    ('lifecycle', '1.0.5', {
+        'checksums': ['61841e3e6edba056a88355a3f1d6698ab8d5d9cb3c05f2af0ec5a44ab516f8ee'],
+    }),
+    ('pkgconfig', '2.0.3', {
+        'checksums': ['330fef440ffeb842a7dcfffc8303743f1feae83e8d6131078b5a44ff11bc3850'],
+    }),
+    ('vctrs', '0.7.3', {
+        'checksums': ['b45078413e06ac624dddb7221a3a43908b405c8abec09822cb86638d30b0435b'],
+    }),
+    ('hms', '1.1.4', {
+        'checksums': ['efc525f797b62b3740d06c6fa8202593ab5aa4fc1edeefb76b6eb9be89e87b94'],
+    }),
+    ('prettyunits', '1.2.0', {
+        'checksums': ['f059f27e2a5c82e351fe05b87ad712f7afc273c651450453f59d99af5deeacea'],
+    }),
+    ('R6', '2.6.1', {
+        'checksums': ['59c6eba8b1b912eb7e104f65053235604be853425ee67c152ac4e86a1f2073b4'],
+    }),
+    ('crayon', '1.5.3', {
+        'checksums': ['3e74a0685541efb5ea763b92cfd5c859df71c46b0605967a0b5dbb7326e9da69'],
+    }),
+    ('progress', '1.2.3', {
+        'checksums': ['ea2b079b894de85c3ab12088c9c52aec06432245047a961d5b4b8aa6889f9276'],
+    }),
+    ('rappdirs', '0.3.4', {
+        'checksums': ['2320ebc9ef3b1a32a1e63f94a6ce2c1c34d66782221a6531e786804f681abc66'],
+    }),
+    ('stringi', '1.8.9', {
+        'checksums': ['427fcebd281d7ea850becce75e0807576dd394a723a814b2d487419b93275a33'],
+    }),
+    ('withr', '3.0.3', {
+        'checksums': ['d86c6454164fc85678bfc85e2a6cce42f7461d45fa9a87de71f376e7956c991e'],
+    }),
+    ('digest', '0.6.39', {
+        'checksums': ['8bf048b49b2d17077138fae758bda56bbd53278d9437f2fdeaedf979c90a13c9'],
+    }),
+    ('batchtools', '0.9.18', {
+        'checksums': ['47ffd7be8f4e06d89207f58aa7fdf49343e2af5578b539447ca2338fc0e7f0cf'],
+    }),
+    ('globals', '0.19.1', {
+        'checksums': ['b58d7ea423eb8772aa1be615d97722a6babf836360e01e533d176e108c216979'],
+    }),
+    ('listenv', '1.0.0', {
+        'checksums': ['b12c71b839638b324857e134e31e7de4fc7595e00af5e7c634a78374bd1cd2aa'],
+    }),
+    ('future', '1.75.0', {
+        'checksums': ['9cc444d36e0d0a7935ac76a027f807a44d505eed7eacccde0dd79a82c7f36ca1'],
+    }),
+    ('future.apply', '1.20.2', {
+        'checksums': ['30d6b64c93a1c40fc1b07e21503fce811707fc30589145832ce0b8947ce74bdf'],
+    }),
+    ('future.batchtools', '0.22.0', {
+        'checksums': ['dbd7022308a290dd359b5c1049a3ebfe5e83849cbb70017ac5e737b29d59be42'],
+    }),
+    #
+    # Some other popular packages available in Cray-R
+    #
+    ('lattice', '0.22-9', { # Dependency for Matrix and others
+        'checksums': ['b72ad4ed2e5269fa7cf668e46f83a9b5d9d5f8fdcbc5b9886531ca19dffca4ba'],
+    }),
+    ('Matrix', '1.7-6', { # Also dependency for survival
+        'checksums': ['694239dbe47e659d6d39a49af95157f46bd94977c283df00c4e8a016601cf143'],
+    }),
+    ('MASS', '7.3-66', { # Dependency for class
+        'checksums': ['59c619c70bfca653f1c74aef880e69405daefd0134e716a1862ecc5334b4e155'],
+    }),
+    ('class', '7.3-24', { 
+        'checksums': ['e8c66e57e3f4214ced6fff135a0d9b55f7bd7d6c947b219063de57b275c507e1'],
+    }),
+    ('foreign', '0.8-91', { 
+        'checksums': ['fdf6c2c6077659a7dc069e58528d3c7cd93b6571c708d98994565386afce5298'],
+    }),
+    ('KernSmooth', '2.23-26', { 
+        'checksums': ['b465bdac197f7faa787e625412ae03d1b7c2c134b1c924cfeb775faf9c4da73e'],
+    }),
+    ('nlme', '3.1-170', { # Dependency for mgcv
+        'checksums': ['d8e1a92cc295b046c9fd12bc1b875fe7921cc1db58f4407f0b97d625e8197b44'],
+    }),
+    ('mgcv', '1.9-4', { # Needs nlme
+        'checksums': ['a98159698afb269e06a46cac1f945bf2b3427a2dd587c6f2efd67ede90089372'],
+    }),  
+    ('nnet', '7.3-21', {
+        'checksums': ['c3914e2b8fd2cc2df7afb60cfa106070fc43cd5b60f877f3790303fc6513895b'],
+    }),  
+    ('rpart', '4.1.27', {
+        'checksums': ['3183552d74f02749a70e2b989591c561ca0f7c146034f415748acc8480ca4050'],
+    }),  
+    ('spatial', '7.3-19', {
+        'checksums': ['6d9d26a64709d7da453ba3b31df8c9e9dbee64fd1b3097e45d1509ad26a9b9dc'],
+    }),  
+    ('survival', '3.8-9', { # Needs Matrix
+        'checksums': ['9aa8fadd4fb185ac48f260c9d0f69fd6dfff4a4e2724920618057aa1f5d5bfbe'],
+    }),
+    #
+    # Some benchmarking packages and their deps not yet included above.
+    #
+    ('fansi', '1.0.7', { # Dependency for bench
+        'checksums': ['32a43f073aeb5c1d31c804014b95c2cb644bb4132119fcea313838b7ea4eb792'],
+    }),
+    ('utf8', '1.2.6', { # Dependency for bench
+        'checksums': ['4589f8b72291329e70b7f3a8c20f2feb4e7764eebad2e6976bc9a3eee7686ce9'],
+    }),
+    ('pillar', '1.11.1', { # Dependency for bench
+        'checksums': ['056ce154238c9b5b8d5dcbcb52e1bc51d33870ce08c8a9ca9496478bd59f4653'],
+    }),
+    ('profmem', '0.7.0', { # Dependency for bench
+        'checksums': ['16efc5f13f4b78919c9d51c07acf62c051e0e3830ae3cc32c596f8daf569c3cb'],
+    }),
+    ('magrittr', '2.0.5', { # Dependency for bench
+        'checksums': ['3f5b5b1d4e6d12807a95c50b6c88cb1d8af2c5eb5213f08bfe58f278eca2ed23'],
+    }),
+    ('tibble', '3.3.1', { # Dependency for bench, benchmarkme
+        'checksums': ['fb309f8a1939021b237c7e85ff7ad6e8ff5acd57a6230d220a452094b492b28f'],
+    }),
+    ('bench', '1.1.4', {
+        'checksums': ['b822f5b7648deecc6b516dcca4e932ce92e65eb166b997b04355218aceb1d083'],
+    }),
+    ('microbenchmark', '1.5.0', {
+        'checksums': ['3d1e92a9206811ad128b28795d20a0d31da5f0c29ea7f1caaf1194ed3e49765f'],
+    }),
+    ('SuppDists', '1.1-9.9', { # Random number generators used by the commonly used R-benchmark-25.R script
+        'checksums': ['7fbc0881948841bed1915cd5b998164167b1a265da6d955a8e85a1fcb3dea926'],
+    }),
+    ('generics', '0.1.2', { # Dependency for bemchmarkme via dplyr
+        'checksums': ['63eab37a9148f820ce2d67bda3dab6dedb9db6890baa5284949c39ab1b4c5898'],
+    }),
+    ('tidyselect', '1.2.1', { # Dependency for bemchmarkme via dplyr
+        'checksums': ['169e97ba0bbfbcdf4a80534322751f87a04370310c40e27f04aac6525d45903c'],
+    }),
+    ('dplyr', '1.2.1', { # Dependency for bemchmarkme
+        'checksums': ['18d66fe2f24cda8b619c177326d39dd015229ab99695fa67d3fa31e4569390e0'],
+    }),
+    ('curl', '7.1.0', { # Dependency for bemchmarkme via httr
+        'checksums': ['74f079b6306acc18fbe60c18dbaac805703fb6579e6ab398f3437377695fd8a9'],
+    }),
+    ('jsonlite', '2.0.0', { # Dependency for bemchmarkme via httr
+        'checksums': ['75eb910c82b350ec33f094779da0f87bff154c232e4ae39c9896a9b89f3ac82d'],
+    }),
+    ('mime', '0.13', { # Dependency for bemchmarkme via httr
+        'checksums': ['7132834cf3c3388eff12bad376d69fbcf8275acc37d36c290e59174fe3c7f3eb'],
+    }),
+    ('sys', '3.4.3', { # Dependency for bemchmarkme via askpass via openssl via httr
+        'checksums': ['051e7332e3074db826efef9059067721864f9d70adc55bbcae3a72e5ae83913a'],
+    }),
+    ('askpass', '1.2.1', { # Dependency for bemchmarkme via openssl via httr
+        'checksums': ['6c2106a74c44a748f2cea795d9686e27a0058a90debcfd8558b62b06aec0c7dd'],
+    }),
+    ('openssl', '2.4.2', { # Dependency for bemchmarkme via httr
+        'checksums': ['1fc030ad0a008472eac7f086666a7623bdbe6d27c5fdb07b5510f56545d2f4e7'],
+    }),
+    ('httr', '1.4.8', { # Dependency for bemchmarkme
+        'checksums': ['62acf6759814f0a2923d18904971e16e01d6147419ceb816dac02113fc3e09f8'],
+    }),
+    ('stringr', '1.6.0', { # Dependency for bemchmarkme
+        'checksums': ['24f2fc5df980a7eb888659e22b9744d2316c558624015c7a7cd8c3ce3e370064'],
+    }),
+    ('benchmarkmeData', '2.0.0', { # Dependency for bemchmarkme
+        'checksums': ['a8dacf85a1c548d011299dca78ec376a7fbea68d0b6482e763dca7685bad1417'],
+    }),
+    ('benchmarkme', '1.0.8', {
+        'checksums': ['1d7100e001a355afc83815b1b698466135f4512c53528c324d13013b3c475f61'],
+    }),
+]
+
+# Set OMP_STACKSIZE to avoid crashes in LibSci
+#env_mod_extra_vars = {
+#    'OMP_STACKSIZE': '256M',
+#}
+
+env_mod_category = 'lang'

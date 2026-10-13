@@ -1,0 +1,31 @@
+local_Hypre_version =        '3.1.0'         # https://github.com/hypre-space/hypre/tags
+
+name =    'Hypre'
+version = local_Hypre_version
+
+homepage = 'https://computation.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods'
+
+whatis = [
+    'Description: A library of scalable linear solvers and multigrid methods, used by PETSc'
+]
+
+description = """
+Hypre is a library for solving large, sparse linear systems of equations on massively
+parallel computers. The problems of interest arise in the simulation codes being developed at LLNL
+and elsewhere to study physical phenomena in the defense, environmental, energy, and biological sciences.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'openmp': True, 'pic': True}
+
+# https://github.com/hypre-space/hypre/archive/refs/tags/v3.1.0.tar.gz
+sources = [{
+    'download_filename': 'v%(version)s.tar.gz',
+    'filename':          SOURCELOWER_TAR_GZ  ,
+    'source_urls':       ['https://github.com/hypre-space/hypre/archive/refs/tags']
+}]
+checksums = ['a6879ae9375d95c26afd97141d61e7a8092807333bf40cd180b385aed7351b2d']
+
+start_dir = 'src'
+
+env_mod_category = 'numlib'

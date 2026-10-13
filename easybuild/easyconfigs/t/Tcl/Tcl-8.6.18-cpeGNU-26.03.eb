@@ -1,0 +1,67 @@
+# contributed by Luca Marsella (CSCS)
+# Adapted by Kurt Lust (kurt.lust@uantwerpen.be) for the LUMI consortium
+easyblock = 'ConfigureMake'
+
+local_zlib_version =         '2.3.3'         # https://github.com/zlib-ng/zlib-ng/releases
+
+local_Tcl8_version =         '8.6.18'        # https://tcl.tk/
+
+name =    'Tcl'
+version = local_Tcl8_version
+
+homepage = 'http://www.tcl.tk/'
+
+whatis = [
+    'Description: Tcl (Tool Command Language) is a very powerful but easy to learn dynamic programming language'
+]
+
+description = """
+Tcl (Tool Command Language) is a very powerful but easy to learn dynamic
+programming language, suitable for a very wide range of uses, including web
+and desktop applications, networking, administration, testing and many more.
+"""
+
+software_license_urls = [
+    'https://tcl.tk/software/tcltk/license.html',
+]
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+
+source_urls = ['http://prdownloads.sourceforge.net/%(namelower)s']
+sources =     ['%(namelower)s%(version)s-src.tar.gz']
+checksums =   ['14f9af32b1767ff718477a8f974ad03c34341097e6b43f4ce54644ee974e268e']
+
+build_deps = [ # Create a reproducible build environment.
+    ('buildtools',   '%(toolchain_version)s',   '', True),
+]
+
+deps = [
+    ('zlib', local_zlib_version),
+]
+
+# Doesn't need MPI, ROCm or BLAS, and module unload never fails so this is safe.
+pre_configure_opts = 'module unload cray-libsci cray-mpich rocm xpmem && '
+pre_build_opts = pre_configure_opts
+pre_test_opts = pre_configure_opts
+pre_install_opts = pre_configure_opts
+
+configure_opts = '--enable-threads EXTRA_INSTALL="install-private-headers"'
+
+start_dir = 'unix'
+
+run_test = 'test'
+
+post_install_cmds = [
+    'ln -s %(installdir)s/bin/tclsh%(version_major)s.%(version_minor)s %(installdir)s/bin/tclsh',
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd .. && cp license.terms changes README.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': ['bin/tclsh%(version_major)s.%(version_minor)s', 'bin/tclsh',
+              'include/tcl.h', 'lib/libtcl%%(version_major)s.%%(version_minor)s.%s' % SHLIB_EXT,
+              'lib/tclConfig.sh', 'man/man1/tclsh.1', f'share/licenses/{name}/license.terms'],
+    'dirs':  ['share'],
+}
+
+env_mod_category = 'lang'

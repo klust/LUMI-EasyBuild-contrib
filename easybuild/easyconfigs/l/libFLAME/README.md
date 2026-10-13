@@ -2,9 +2,11 @@
 
 -   [libFLAME development and home page on GitHub](https://github.com/flame/libflame/)
 
--   [AMD's fork of libFLAME home page](https://developer.amd.com/amd-aocl/blas-library/#libflame)
+-   [AMD's fork of libFLAME home page](https://www.amd.com/en/developer/aocl/dense.html#lapack)
 
 -   [AMD's GitHub with the libFLAME fork](https://github.com/amd/libflame)
+
+    -   [GitHub releases](https://github.com/amd/libflame/releases)
 
 
 ## Notes
@@ -69,3 +71,22 @@
     a piece of code with incompatible pointer types. We tried to patch this but are not 
     100% sure the patch is the correct one. We've also patched several type errors in 
     printf function calls.
+
+-   Switched to EB6-compatible parameters for 26.03
+
+-   Tried 5.3 instead which requires CMake, but couldn't get it to compile, not even with
+    the default options.
+
+
+### DOES NOT WORK Version 5.3 for CPE 26.03
+
+-   The EasyConfig is a major rework of the 5.1 one for 26.03 as the build process is
+    now only CMake.
+
+-   Switched to EB6-compatible parameters.
+
+-   But we haven't found a combination of options yet that compiles properly. It looks like
+    5.3 (and likely 5.2, when the switch was made) are very buggy versions...
+
+    Even with all default settings, the library does not compile...
+

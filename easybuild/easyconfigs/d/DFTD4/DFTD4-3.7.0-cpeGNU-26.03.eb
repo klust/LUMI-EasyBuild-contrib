@@ -1,0 +1,74 @@
+easyblock = 'MesonNinja'
+
+name =    'DFTD4'
+version = '3.7.0'
+
+homepage= 'https://github.com/dftd4/dftd4'
+
+whatis = [
+    'Description: DFTD4: Generally Applicable Atomic-Charge Dependent London Dispersion Correction'
+]
+
+description = """
+Generally Applicable Atomic-Charge Dependent London Dispersion Correction.
+
+Citation
+========
+The authors of the package ask to always cite the following papers:
+
+Eike Caldeweyher, Christoph Bannwarth and Stefan Grimme, J. Chem. Phys., 2017,
+147, 034112. DOI: 10.1063/1.4993215
+
+Eike Caldeweyher, Sebastian Ehlert, Andreas Hansen, Hagen Neugebauer, Sebastian
+Spicher, Christoph Bannwarth and Stefan Grimme, J. Chem Phys, 2019, 150, 154122.
+DOI: 10.1063/1.5090222 chemrxiv: 10.26434/chemrxiv.7430216
+
+Eike Caldeweyher, Jan-Michael Mewes, Sebastian Ehlert and Stefan Grimme, Phys. Chem.
+Chem. Phys., 2020, 22, 8499-8512. DOI: 10.1039/D0CP00502A
+chemrxiv: 10.26434/chemrxiv.10299428
+
+License
+=======
+This project is free software: you can redistribute it and/or modify it under the
+terms of the Lesser GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later version.
+
+
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+
+source_urls = [f'https://github.com/dftd4/dftd4/releases/download/v{version}/']
+sources =     [f'dftd4-{version}.tar.xz']
+patches =     ['DFTD4-3.7.0.patch']
+checksums =   [
+    '4e8749df6852bf863d5d1831780a2d30e9ac4afcfebbbfe5f6a6a73d06d6c6ee', # dftd4-3.7.0.tar.xz
+    '73ba5ec7c061c9b82f1791049defa28695c03753b56aa273a1e35076657b5a97'  # DFTD4-3.7.0.patch
+]
+
+build_deps = [
+    ('buildtools',        '%(toolchain_version)s', '',              SYSTEM),
+    ('buildtools-python', '%(toolchain_version)s', '-systemPython', SYSTEM)
+]
+
+pre_configure_opts = 'export FC=ftn && export CC=cc &&'
+# Add API v2 for VASP compatibility
+configure_opts = '-Dlapack=custom -Dapi_v2=true'
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd ../%(namelower)s-%(version)s && cp COPYING COPYING.LESSER %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+	'files' : ['bin/dftd4','lib/libdftd4.a','include/dftd4.h'],
+	'dirs' :  ['bin','lib','include']
+}
+
+sanity_check_cmds = [
+    'pkg-config --validate dftd4',
+    f'pkg-config --exact-version={version} dftd4',
+    'dftd4 --version'
+]
+
+env_mod_category = 'chem'

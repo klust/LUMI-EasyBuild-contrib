@@ -72,3 +72,62 @@
 
 -   Needed to use the `craype` module from 25.09, so this is a dirty EasyConfig that
     may fail in the future. This was done to work around a bug in the compiler wrappers.
+
+
+### 22Jul2025_update4 for cpeGNU 25.03 (CPU)
+
+-   Evolution of the EasyConfig for 22Jul2025_update2 for cpeGNU 25.03.
+
+-   Switched to EB6-compatible parameters.
+
+-   Went through the package list and compared with the manual.
+
+    -   The manual says PLUMED 2.4.x, 2.5.x or 2.6.x, the download script 
+        downloads version 2.7.2... We installed the latest 2.7 version just to 
+        be on the safe side.
+
+    -   Added a few additional ones that are new or that we had issues with in the past.
+
+    -   The **QUIP** extension is explicitly not supported as it is impossible to build this
+        code properly on LUMI. Its Meson config script is way too primitive, fails to
+        detect the HPE Cray PE and doesn't allow to overwrite the settings easily to tell
+        it that the MPI, BLAS and ScaLAPACK libraries will be linked properly.
+
+        Neither Spack nor EasyBuild currently offer any support for QUIP which says a lot...
+
+    -   The **ML-HDNNP** is explicitly not included as it requires the n2p2 library which
+        itself has a lot of dependencies, many of which don't belong on an HPC system (TeX)
+        or directly on Lustre (lots of Python packages needed). It is not clear if a minimal
+        installation is possible and would be good enough to at least provide the parts that
+        LAMMPS needs.
+
+    -   The **QMMM** extension is also not included because this creates a terrible dependency
+        tree, also pulling in QuantumESPRESSO, making quick updates after system upgrades
+        totally impossible.
+
+    -   **VTK** would make the whole graphics stack a dependency. As it is hard to build that stack
+        and is not even done for all versions of the PE, this is not included.
+
+-   Hidden downloads found:
+
+    -   https://download.lammps.org/potentials/C_10_10.mesocnt to the `potentials` subdirectory
+        in the sources.
+
+        However, it looks like that one too is first downloaded to `easybuild_obj`. But putting
+        the file ourselves in the `potentials` subdirectory seems to prevent the download.
+
+    -   https://github.com/ICAMS/lammps-user-pace/archive/refs/tags/v.2023.11.25.fix2.tar.gz
+        but that one is uncompressed in `easybuild_obj`... Download is first stored as
+        `libpace.tar.gz` in `easybuild_obj`.
+
+        It looks like the sources may be uncompressed elsewhere if then LOCAL_ML_PACE is set
+        to the location.
+
+        Or simply making sure `libpace.tar.gz` is in `easybuild_obj` when the configure step
+        starts, also works.
+
+    -   It looks like we have an issue with Eigen also (wants to download version 3.4.0).
+
+        This was solved by using Eigen 3.4.0 and explicitly pointing CMake to it.
+
+    TODO: Understand the script tools/offline/scripts/init_http_cache.sh and when it plays a role.

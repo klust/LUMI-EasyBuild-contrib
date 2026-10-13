@@ -18,8 +18,14 @@ gcc is the only compiler people use!
 -   The EasyConfig is a direct port of the CSCS one.
 
 
-### libvori 220621 for CP2K 2022.1, 2023.1, 2024.x and 2025.x
+### libvori 220621 for CP2K 2022.1, 2023.1, 2024.x, 2025.x and 2026.x
 
 -   Trivial port of the previous EasyConfig
 
 -   Cleaned up a bit for 25.03.
+
+-   Switched to EB6-compatible parameters for 26.03.
+
+-   For 26.03 we build both a static and shared library, and it turned out that we needed
+    to enable PIC ourselves as the CMake recipe didn't do so, so the building of the shared
+    library failed.

@@ -57,7 +57,7 @@
 -   Started as a version bump of the 2.11.0 EasyConfig for 25.09, but went on with
     a clean-up and adding new options:
 
--   Added a cpeCray version.
+-   Added a cpeCray and a cpeAMD version.
 
 -   This version of ADIOS does not pick up the regular Blosc, but needs Blosc2 2.x. The 3.x
     versions did not work.
@@ -68,3 +68,7 @@
 
 -   Added SZ3 support to the cpeGNU versions. For the cpeCray versions, we first need to find
     a solution for compile issues with the CCE compilers.
+
+-   Removed the Szip dependency as that is really only a dependency of HDF5 where newer versions
+    are compiled with libaec instead, so this may only lead to problems having two libraries with
+    the same API in the search path.

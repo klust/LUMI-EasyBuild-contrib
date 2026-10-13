@@ -56,3 +56,12 @@ file-compatible with AMBER, CHARMM, and X-PLOR.
     -   `-rocm-gpu-resident`:  Uses HIP with the GPU in resident mode, so only supports 
         single node runs.
     
+
+### Version 3.0.3 for CPU in 26.03
+
+-   A straightforward port of 3.0.2 in 25.03, but we switched to the new EB6-compatible
+    parameters.
+
+-   As NAMD appears to be incompatible with Tcl 9.0, we needed a separate Tcl installation
+    for NAMD. The documentation suggests that Tcl support is rather important so we left
+    it in and opted for a separate Tcl 8.6 installation.

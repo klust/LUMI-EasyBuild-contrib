@@ -33,3 +33,4 @@ supercomputers.
     -   Two are used for GPU configuration of NAMD: `-multicore` without support for 
         distributed memory computing and `-mpi-crayshasta-smp`.
 
+-   For 26.03, we switched to the new EB6-compatible parameters.

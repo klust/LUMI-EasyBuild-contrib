@@ -8,7 +8,7 @@ local_MUMPS_version =        '5.9.1'         # https://mumps-solver.org/index.ph
 
 name =           'MUMPS'
 version =        local_MUMPS_version
-version_suffix = '-static-noOpenMP'
+version_suffix = '-noOpenMP-METIS-idx32-fp64'
 
 homepage = 'https://graal.ens-lyon.fr/MUMPS/'
 
@@ -48,6 +48,15 @@ deps = [
 
 max_parallel = 1
 
-build_opts = 'all SONAME_VERSION="%(version)s"'
+build_opts = 'all allshared SONAME_VERSION="%(version)s"'
+
+sanity_check_paths = {
+    'files': ['include/%smumps_%s.h' % (x, y) for x in ['c', 'd', 's', 'z'] for y in ['c', 'struc']] +
+             ['include/mumps_compat.h', 'include/mumps_c_types.h'] +
+             ['lib/lib%smumps.%s' % (x,y) for x in ['c', 'd', 's', 'z'] for y in ['a', SHLIB_EXT]] +
+             ['lib/libmumps_common.a', f'lib/libmumps_common.{SHLIB_EXT}', 
+              'lib/libpord.a', f'lib/libpord.{SHLIB_EXT}'],
+    'dirs':  []
+}
 
 env_mod_category = 'math'

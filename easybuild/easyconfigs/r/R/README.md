@@ -165,7 +165,7 @@ the other EasyConfigs offer examples of how to add packages.
                 not be needed when using the Cray wrappers.
                 
                 
-## Version 4.3.1 for 22.12
+### Version 4.3.1 for 22.12
 
 -   Based on the 4.2.1 work but now focused on adding packages for parallel
     computing (and developed the USER.md page explaining options for parallel
@@ -176,19 +176,32 @@ the other EasyConfigs offer examples of how to add packages.
     and when it does so.
     
 
-## Version 4.3.2 for 23.09
+### Version 4.3.2 for 23.09
 
 -   Quick port with minor version updates of the 22.12 one.
 
 
-## Version 4.4.1 for 24.03
+### Version 4.4.1 for 24.03
 
 -   Quick port with version updates of the 23.09 EasyConfigs.
 
 -   Changed the naming to stress that we link with the multithreaded BLAS libraries.
 
 
-## Version 4.5.1 for 25.03
+### Version 4.5.1 for 25.03
 
 -   Trivial port of the EasyConfig for 4.4.1 for 24.03, but with an update of all packages.
             
+
+### Version 4.6.1 for 26.03
+
+-   Mostly a trivial port of the EasyConfig for 4.5.1 in 25.03, but with an update of packages.
+
+-   Switched to EB6-compatible parameters.
+
+-   The included tcltk package did not work and we do not yet understand why. Tcl9 doesn't seem
+    to have a `init.tcl` file which the extension seems to require, but then it is also missing
+    in a standard EasyBuild build while they still include that extension.
+
+-   One new dependency for the "fs" package, though we could have played with options to use
+    and internal build of libuv instead.

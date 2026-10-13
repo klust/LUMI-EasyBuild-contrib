@@ -1,0 +1,81 @@
+easyblock = 'CMakeMake'
+
+local_Conduit_version =      '0.9.7'         # https://github.com/LLNL/conduit/releases
+local_Catalyst_version =     '2.1.0'         # https://gitlab.kitware.com/paraview/catalyst/-/tags
+
+name =    'Catalyst'
+version = local_Catalyst_version
+
+homepage = 'https://gitlab.kitware.com/paraview/catalyst/'
+
+whatis = ['Description: Catalyst is an in situ visualization framework']
+
+description = """
+Catalyst is an in situ visualization framework created as part
+of ParaView.
+
+Also known as coprocessing or concurrent analysis, the in situ
+workflow allows you to perform analysis and visualization at
+the time of the simulation.
+
+As only the output of the analysis is written on the disk, the I/O
+operations are considerably reduced compared to:
+
+  - writing full simulation output
+  - reading the full-size data in an analysis tool
+  - writing the analysis output.
+
+ParaView Catalyst provides a small, easy-to-use, API that any simulation
+developed in C++, C, Fortran or Python can use to do in situ analysis
+without developing its own custom data analysis code.
+"""
+
+doc_urls = ['https://catalyst-in-situ.readthedocs.io/en/latest/']
+software_license_urls = ['https://gitlab.kitware.com/paraview/catalyst/-/blob/master/License.txt']
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'pic': True, 'usempi': True}
+
+# https://gitlab.kitware.com/paraview/catalyst/-/archive/v2.1.0/catalyst-v2.1.0.tar.bz2?ref_type=tags
+source_urls = [('https://gitlab.kitware.com/paraview/catalyst/-/archive/v%(version)s/')]
+sources =     [('catalyst-v%(version)s.tar.bz2')]
+checksums =   ['d01829f602e3828364b0a5f23b821c8fa95f049959b9d1c1d07375193fdcbe6d']
+
+build_deps = [
+    ('buildtools',        '%(toolchain_version)s', '', True),
+    ('craype-accel-host', EXTERNAL_MODULE),
+]
+
+deps = [
+    ('cray-python', EXTERNAL_MODULE),
+    ('Conduit',     local_Conduit_version),
+]
+
+pre_configure_opts = ' && '.join([
+    'module unload rocm cray-libsci',
+    'export LDFLAGS="${LDFLAGS} -L${CRAY_PYTHON_PREFIX}/lib -Wl,-rpath=${CRAY_PYTHON_PREFIX}/lib"',
+]) + ' && '
+
+pre_build_opts = pre_configure_opts
+
+configure_opts = ' '.join([
+    '-DCMAKE_BULD_TYPE=Release',
+    '-DCMAKE_INSTALL_LIBDIR=lib',
+    '-DCATALYST_BUILD_TOOLS=ON',
+    '-DCATALYST_USE_MPI=ON',
+    '-DCATALYST_WRAP_PYTHON=ON',
+    '-DCATALYST_WRAP_FORTRAN=ON',
+    '-DCATALYST_WITH_EXTERNAL_CONDUIT=ON',
+])
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd ../%(namelower)s-v%(version)s && cp 3rdPartyLicenses.txt License.txt README.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': [f'lib/libcatalyst.{SHLIB_EXT}', f'lib/libcatalyst_fortran.{SHLIB_EXT}'],
+    'dirs':  ['include', 'lib/cmake'],
+}
+
+env_mod_category = 'vis'

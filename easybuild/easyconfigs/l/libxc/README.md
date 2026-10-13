@@ -41,8 +41,10 @@ tested and reliable set of LDA, GGA, and meta-GGA  functionals.
 
 -   Derived from the 6.1.0 EasyConfig.
 
--   6.2.2 is still the prefered version for all CP2K 2024.x versions so it was ported 
+-   6.2.2 is still the preferred version for all CP2K 2024.x versions so it was ported 
     to 25.03 as well.
+
+-   Ported to 26.03 also for a version of Yambo. Switched to EB6-compatible parameters.
 
 
 ### Version 7.0.0 for cpeGNU 24.03
@@ -57,3 +59,15 @@ tested and reliable set of LDA, GGA, and meta-GGA  functionals.
     easyconfigs.
     
     The `-NoFHC` version is required for some VASP configurations.
+
+-   For 26.03, switched to EB6-compatible parameters.
+
+
+### Version 7.1.2 for 26.03
+
+-   The `-NoFHC` version is meant for VASP, the `-KXC` version is used by ABINIT.
+
+-   The EasyConfig is a direct port of the corresponding 7.0.0 one for 25.03, but with a
+    switch to EB6-compatible parameters.
+
+-   We needed to turn off testing as that requires `pytest`.

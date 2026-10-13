@@ -43,8 +43,8 @@ local_common_configopts = ' '.join([
 ])
 
 configopts = [
-    local_common_configopts + '-DMATIO_SHARED=OFF',
-    local_common_configopts + '-DMATIO_SHARED=ON',
+    local_common_configopts + ' -DMATIO_SHARED=OFF',
+    local_common_configopts + ' -DMATIO_SHARED=ON',
 ]
 
 postinstallcmds = [

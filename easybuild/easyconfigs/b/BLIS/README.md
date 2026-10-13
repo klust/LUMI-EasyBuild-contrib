@@ -2,9 +2,11 @@
 
 -   [BLIS development and home page on GitHub](https://github.com/flame/blis)
 
--   [AMD's fork of BLIS home page](https://developer.amd.com/amd-aocl/blas-library/)
+-   [AMD's fork of BLIS home page](https://www.amd.com/en/developer/aocl/dense.html)
 
 -   [AMD's GitHub with the BLIS fork](https://github.com/amd/blis/)
+
+    -   [GitHub releases](https://github.com/amd/blis/releases)
   
   
 ## Notes
@@ -64,3 +66,14 @@
 
 -   The EasyConfig is s trivial port of the EasyConfig for 4.2 for 24.03, but we did
     change the name of the downloaded files.
+
+-   For 26.03, we switched to EB6-compatible parameters and worked a bit on
+    the sanity checks. Unfortunately, the version encoded in the `.pc`
+    file is more than just `5.1.0` so we do not test to detect version errors from erroneous
+    downloads or so.
+
+-   Considered switching to 5.3 for 26.03. However, there is a switch to the
+    CMake build process which is enforced for some tools and not for others,
+    and we couldn't get libFLAME (which only supports CMake) to build. It is
+    currently not clear if it is incompatible with BLIS built with configure
+    or what is going on.

@@ -7,6 +7,8 @@ It is part of the WRF software suite and is used to preprocess input data for WR
   
 -   [WPS on GitHub](https://github.com/wrf-model/WPS)
 
+    -   [GitHub releases](https://github.com/wrf-model/WPS/releases)
+
 -   [WRF Users' Page](https://www2.mmm.ucar.edu/wrf/users/)
 
   

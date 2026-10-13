@@ -174,3 +174,29 @@ and `--enable-external-lapack` are used.
     available in the usual way.
 
 -   For 25.09, we switched to the new EasyConfig parameter set.
+
+
+### 2.7.6 for 26.03
+
+-   Created specifically for LAMMPS 22Jul2025_update4 as its manual claims that it only 
+    supports PLUMED 2.4, 2.5 and 2.6 but it itself downloads PLUMED 2.7.2 when it is not
+    available and the PLUMED extension is used.
+
+-   The EasyConfig is a straightforward adaptation of the ones we had long ago for 2.7.4 
+    (in 22.08), but uses EB6-compatible parameters.
+
+
+### 2.9.5 for 26.03
+
+-   Trivial version update of previous 2.9.4 EasyConfigs, with EB6-compatible parameters.
+
+-   Sources are again in the usual location that we used before 2.9.4.
+
+
+### 2.10.1 for 26.03
+
+-   Almost trivial version update of 2.9.5 for 26.03.
+
+-   Due to a bug in PLUMED caused by some features not being tested properly in CI
+    ([Issue #1294](https://github.com/plumed/plumed2/issues/1294)), Boost graph
+    support had to be disabled.

@@ -1,0 +1,68 @@
+# Developed by Kurt Lust for the LUMI consortium
+#
+easyblock = 'CMakeMake'
+
+local_libxs_version =       '1.0.0'         # https://github.com/hfp/libxs/releases
+
+name =    'libxs'
+version = local_libxs_version
+
+homepage = 'https://libxs.readthedocs.io/en/latest/'
+
+whatis = [
+    'Description: libxs is a portable C library providing building blocks for memory operations, numerics, synchronization, and more'
+]
+
+description = """
+LIBXS is a portable C library providing building blocks for memory operations, 
+numerics, synchronization, and more — with a focus on performance and minimal 
+dependencies. Targets x86-64, AArch64, and RISC-V; requires only a C89 compiler. 
+Originally developed as part of libxsmm.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'usempi': True, 'openmp': True}
+
+# https://github.com/hfp/libxs/releases/download/1.0.0/libxs-1.0.0.tar.gz
+source_urls = ['https://github.com/hfp/libxs/releases/download/%(version)s/']
+sources =     [SOURCELOWER_TAR_GZ]
+checksums =   ['de26f50cb986a2f0e4f92c0eb489d40a44f7e4c5acd22751a6cfa2829dabd04d']
+
+build_deps = [
+    ('buildtools',          '%(toolchain_version)s', '', SYSTEM),
+    ('craype-network-none', EXTERNAL_MODULE),
+    ('craype-accel-host',   EXTERNAL_MODULE),
+]
+
+local_common_configure_opts = ' '.join([
+    '-DLIBXS_FORTRAN=ON',
+    '-DCMAKE_VERBOSE_MAKEFILE=ON',
+])
+
+configure_opts = [
+    local_common_configure_opts + ' -DBUILD_SHARED_LIBS=OFF', # Shared libs off is actually the default for this package.
+    local_common_configure_opts + ' -DBUILD_SHARED_LIBS=ON',
+]
+
+pre_configure_opts = 'module unload rocm && '
+
+#max_parallel = 1
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd ../%(namelower)s-%(version)s && cp LICENSE.md README.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': ['include/libxs/libxs.h', 'include/libxs/libxs.mod',
+              'lib/libxs.a', f'lib/libxs.{SHLIB_EXT}',
+              'lib/pkgconfig/libxs.pc'],
+    'dirs': ['lib/cmake/libxs']
+}
+
+sanity_check_cmds = [
+    'pkg-config --validate libxs',
+    f'pkg-config --exact-version={version} libxs'
+]
+
+env_mod_category = 'chem'

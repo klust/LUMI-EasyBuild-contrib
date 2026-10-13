@@ -1,0 +1,115 @@
+easyblock = 'CMakeMake'
+
+local_Conduit_version =      '0.9.7'         # https://github.com/LLNL/conduit/releases
+
+local_zlib_version =         '2.3.3'         # https://github.com/zlib-ng/zlib-ng/releases
+local_Silo_version =         '4.12.1'        # https://github.com/LLNL/Silo/releases
+
+name = 'Conduit'
+version = local_Conduit_version
+
+homepage = 'https://software.llnl.gov/conduit/'
+
+whatis = [
+    'Description: Conduit provides an intuitive model for describing '
+    'hierarchical scientific data'
+]
+
+description = """
+Conduit is an open source project from Lawrence Livermore National Laboratory
+that provides an intuitive model for describing hierarchical scientific data
+in C++, C, Fortran, and Python. It is used for data coupling between packages
+in-core, serialization, and I/O tasks.
+
+Conduit’s Core API provides:
+
+  - A flexible way to describe hierarchal data: A JSON-inspired data model for
+    describing hierarchical in-core scientific data.
+
+  - A sane API to access hierarchal data: A dynamic API for rapid construction
+    and consumption of hierarchical objects.
+
+Conduit is under active development and targets Linux, OSX, and Windows
+platforms. The C++ API underpins the other language APIs and currently has the
+most features. We are still filling out the C, Fortran, and Python APIs.
+"""
+
+doc_urls = ['https://llnl-conduit.readthedocs.io']
+software_license_urls = ['https://llnl-conduit.readthedocs.io/en/latest/licenses.html']
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'pic': True, 'usempi': True}
+
+# Use this construct because we want to pull in some dependencies also via
+# recursive git.
+source_urls = [GITHUB_SOURCE]
+sources = [{
+    'filename': 'conduit-%(version)s.tar.xz',
+    'git_config': {
+        'url'       : 'https://github.com/LLNL',
+        'repo_name' : 'conduit',
+        'commit'    : 'v%(version)s',
+        'recursive' : True,
+    }
+}]
+checksums = ['a2284cde7c9f267a29a8d9f2db35e986c48705e9072c9a8d008a350ccfc26fcc']
+
+build_deps = [
+    ('buildtools',        '%(toolchain_version)s', '',                           True),
+    ('buildtools-python', '%(toolchain_version)s', '-cray-python%(pyshortver)s', True),
+    ('craype-accel-host', EXTERNAL_MODULE),
+]
+
+deps = [
+    ('cray-python', EXTERNAL_MODULE),
+    ('cray-hdf5-parallel', EXTERNAL_MODULE),
+    ('Silo',               local_Silo_version),
+    ('zlib',               local_zlib_version),
+]
+
+start_dir = 'src'
+
+pre_configure_opts = 'module unload rocm cray-libsci && '
+pre_install_opts = pre_test_opts = pre_build_opts = pre_configure_opts
+
+configure_opts = ' '.join([
+    '-D BUILD_SHARED_LIBS=ON',
+    '-D ENABLE_OPENMP=ON',
+    '-D ENABLE_MPI=ON',
+    '-D ENABLE_FORTRAN=ON',
+    '-D ENABLE_PYTHON=ON',
+    '-D ENABLE_MPI=ON',
+    '-D ZLIB_DIR=$EBROOTZLIB',
+    '-D SILO_DIR=$EBROOTSILO',
+    '-D HDF5_DIR=$CRAY_HDF5_PARALLEL_PREFIX',
+])
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd ../%(namelower)s && cp CHANGELOG.md COPYRIGHT COPYRIGHT_FILE_HEADER LICENSE README.md thirdparty_licenses.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+env_mod_extra_paths = {
+    'PYTHONPATH': 'lib/python%(pyshortver)s/site-packages',
+}
+
+sanity_check_paths = {
+    'files': ['include/conduit/conduit.h', f'lib/libconduit.{SHLIB_EXT}'],
+    'dirs':  ['bin', 'include', 'lib/cmake', 'share/licenses/%(name)s'],
+}
+
+# Unfortunately some commands in the bin directory don't return the 0 exit code
+# when used with --help, but 255 or another number... It still works to check if
+# all shared libraries are found as the error code for that is 127.
+
+sanity_check_cmds = [
+    'conduit_adjset_validate --help ; [ $? -eq 255 ]',
+    'conduit_blueprint_verify --help ; [ $? -eq 255 ]',
+    'conduit_generate_data --help',
+    'conduit_generate_data_mpi --help',
+    'conduit_relay_io_convert --help ; [ $? -eq 254 ]',
+    'conduit_relay_io_ls --help',
+    'conduit_staging --help'
+]
+
+env_mod_category = 'vis'

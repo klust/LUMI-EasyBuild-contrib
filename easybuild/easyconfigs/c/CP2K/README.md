@@ -108,7 +108,10 @@ future toolchains.
             CP2K seems to be slow upgrading that one. We build with 2.6.0 but consider reverting to 
             2.3.1 is users report issues. the ChangeLog of spglib also does not mention anything too scary.
             
--   Otherwise a rather trivial port of the corresponding 2024.2 versions for LUMI/24.03.   
+-   Otherwise a rather trivial port of the corresponding 2024.2 versions for LUMI/24.03.
+
+-   For 26.03, we switched to EB6-compatible parameters.
+
         
 ### Version 2025.2 for 25.03 GPU
 
@@ -117,3 +120,56 @@ future toolchains.
 - A few updates to the PSMP-file concerning flags.
 
 - Otherwise a trivial port of the corresponding 2024.2 version for LUMI/24.03
+
+
+### Version 2026.2 for CPU
+
+-   Dependency check in the code of CP2K:
+
+    -   [stage 3](https://github.com/cp2k/cp2k/tree/v2026.2/tools/toolchain/scripts/stage3)
+  
+        -   [Eigen 5.0.1](https://github.com/cp2k/cp2k/blob/v2026.2/tools/toolchain/scripts/stage3/install_eigen.sh#L15)
+            is already OK should we want to add Eigen.
+        
+		-   [Libint 2.13.1](https://github.com/cp2k/cp2k/blob/v2026.2/tools/toolchain/scripts/stage3/install_libint.sh#L15).
+		    We have no EasyBuild example for how to configure this properly for CP2K...
+            The CP2K build seems to retrieve a preconfigured version from the CP2K download site.
+
+        -   It was tested with [libxc 7.0.0](https://github.com/cp2k/cp2k/blob/v2026.2/tools/toolchain/scripts/stage3/install_libxc.sh#L9).
+            
+    -   [Stage 4](https://github.com/cp2k/cp2k/tree/v2026.2/tools/toolchain/scripts/stage4)
+
+        -   [COSMA 2.8.4](https://github.com/cp2k/cp2k/blob/v2026.2/tools/toolchain/scripts/stage4/install_cosma.sh#L9)
+            is the preferred version. It was also the most recent version when this EasyConfig was developed.
+    
+        -   [libxsmm 2.0.0](https://github.com/cp2k/cp2k/blob/v2026.2/tools/toolchain/scripts/stage4/install_libxsmm.sh#L9)
+
+        -   [libxs 1.0.0](https://github.com/cp2k/cp2k/blob/v2026.2/tools/toolchain/scripts/stage4/install_libxs.sh#L9)
+            
+    -   [Stage 5](https://github.com/cp2k/cp2k/tree/v2026.2/tools/toolchain/scripts/stage5)
+        
+		-   The version was tested by the developers with [ELPA 2026.02.002](https://github.com/cp2k/cp2k/blob/v2026.2/tools/toolchain/scripts/stage5/install_elpa.sh#L10).
+       		 	
+    -   [Stage 6](https://github.com/cp2k/cp2k/tree/v2026.2/tools/toolchain/scripts/stage6)
+    
+        -   [GSL 2.8](https://github.com/cp2k/cp2k/blob/v2026.2/tools/toolchain/scripts/stage6/install_gsl.sh#L9)
+            
+        -   [PLUMED 2.10.1](https://github.com/cp2k/cp2k/blob/v2026.2/tools/toolchain/scripts/stage6/install_plumed.sh#L9).
+        
+    -   [Stage 7](https://github.com/cp2k/cp2k/tree/v2026.2/tools/toolchain/scripts/stage7)
+    
+        -   Tested with [libvori 220621](https://github.com/cp2k/cp2k/blob/v2026.2/tools/toolchain/scripts/stage7/install_libvori.sh#L10).
+        
+        -   Tested with [spglib 2.7.0](https://github.com/cp2k/cp2k/blob/v2026.2/tools/toolchain/scripts/stage7/install_spglib.sh#L8).
+
+            
+-   The old build system with the include Makefile is not supported, hence a switch to CMake.
+
+    It now builds shared libraries and an executable using shared libraries.
+
+    Trying to build a static version with `-DBUILD_SHARED_LIBS=ON` creates a static library, 
+    but the executable still uses shared libraries for almost all dependencies, so it looks
+    like we cannot use modules that provide both a static and shared library but would need
+    to enforce by only providing static libraries.
+
+-   DBCSR seems to be a new mandatory dependency. 

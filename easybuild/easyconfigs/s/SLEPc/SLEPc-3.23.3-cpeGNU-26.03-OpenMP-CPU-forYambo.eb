@@ -1,0 +1,48 @@
+name = 'SLEPc'
+
+version =       '3.23.3'
+version_suffix = '-OpenMP-CPU-forYambo'
+
+homepage = 'https://slepc.upv.es'
+
+description = """
+SLEPc (Scalable Library for Eigenvalue Problem Computations) is a software 
+library for the solution of large scale sparse eigenvalue problems on parallel
+computers. It is an extension of PETSc and can be used for either standard or 
+generalized eigenproblems, with real or complex arithmetic. It can also be used
+for computing a partial SVD of a large, sparse, rectangular matrix, and to solve
+quadratic eigenvalue problems.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'usempi': True, 'openmp': True}
+
+source_urls = ['https://slepc.upv.es/download/distrib']
+sources =     [SOURCELOWER_TAR_GZ]
+checksums =   ['6b0c4f706bdfca46f00b30026b4d92a4eb68faa03e40cbcbfeadb89999653621']
+
+
+build_deps = [
+    ('buildtools', '%(toolchain_version)s', '', True),
+]
+
+deps = [
+    ('PETSc', '3.23.7', '-OpenMP-CPU-forYambo')
+]
+
+# It turns out that our PETSc installation does not contain architecture directories.
+#pre_configure_opts = 'export PETSC_DIR="$EBROOTPETSC" && export PETSC_ARCH="" && '
+#pre_install_opts = pre_build_opts = pre_configure_opts
+
+run_test = False
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cp CHANGELOG.md CONTRIBUTING.md LICENSE.md README.md README-devel.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+env_mod_extra_vars = {
+    'SLEPC_DIR': '%(installdir)s',
+}
+
+env_mod_category = 'numlib'

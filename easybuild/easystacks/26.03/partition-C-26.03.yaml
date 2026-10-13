@@ -1,5 +1,14 @@
 easyconfigs:
 #
+# ABINIT
+#
+  - libxc-7.0.0-cpeGNU-26.03-KXC.eb
+  - ELPA-2025.06.001-cpeGNU-26.03-CPU.eb
+  - ABINIT-10.6.3-cpeGNU-26.03-CPU.eb
+  - libxc-7.1.2-cpeGNU-26.03-KXC.eb
+  - ELPA-2026.02.002-cpeGNU-26.03-CPU.eb
+  - ABINIT-10.8.3-cpeGNU-26.03-CPU.eb
+#
 # ADIOS2
 #
   - SZ-2.1.12.5-cpeGNU-26.03-hdf5.eb
@@ -27,19 +36,34 @@ easyconfigs:
 #
 # amd-aocl (AOCL)
 #
-# TODO
+  - aocl-utils-5.1-cpeGNU-26.03.eb
+  - aocl-utils-5.1-cpeCray-26.03.eb
+  - BLIS-5.1-cpeGNU-26.03-amd.eb
+  - BLIS-5.1-cpeGNU-26.03-amd-ILP64.eb
+  - BLIS-5.1-cpeCray-26.03-amd.eb
+  - BLIS-5.1-cpeCray-26.03-amd-ILP64.eb
+  - libFLAME-5.1-cpeGNU-26.03-amd.eb
+  - libFLAME-5.1-cpeCray-26.03-amd.eb
+  - libFLAME-5.1-cpeGNU-26.03-amd-ILP64.eb
+  - libFLAME-5.1-cpeCray-26.03-amd-ILP64.eb
+  - ScaLAPACK-5.1-cpeGNU-26.03-amd.eb
+  - ScaLAPACK-5.1-cpeGNU-26.03-amd-ILP64.eb
+  - ScaLAPACK-5.1-cpeCray-26.03-amd.eb
+  - amd-aocl-5.1-cpeGNU-26.03.eb
+  - amd-aocl-5.1-cpeGNU-26.03-ILP64.eb
+  - amd-aocl-5.1-cpeCray-26.03.eb
 #
 # aria2
 #
   - CppUnit-1.15.1-cpeGNU-26.03.eb
   - CppUnit-1.15.1-cpeCray-26.03.eb
-  #- CppUnit-1.15.1-cpeAOCC-26.03.eb
+  - CppUnit-1.15.1-cpeAOCC-26.03.eb
   - c-ares-1.34.8-cpeGNU-26.03.eb
   - c-ares-1.34.8-cpeCray-26.03.eb
-  #- c-ares-1.34.8-cpeAOCC-26.03.eb
+  - c-ares-1.34.8-cpeAOCC-26.03.eb
   - aria2-1.37.0-cpeGNU-26.03.eb
   - aria2-1.37.0-cpeCray-26.03.eb
-  #- aria2-1.37.0-cpeAOCC-26.03.eb
+  - aria2-1.37.0-cpeAOCC-26.03.eb
 #
 # BCFtools and related bio-informatics tools
 #
@@ -60,7 +84,7 @@ easyconfigs:
 #
   - json-c-0.19-cpeGNU-26.03.eb
   - json-c-0.19-cpeCray-26.03.eb
-  #- json-c-0.19-cpeAOCC-26.03.eb
+  - json-c-0.19-cpeAOCC-26.03.eb
   - CMOR-3.15.2-cpeGNU-26.03.eb
   - CMOR-3.15.2-cpeCray-26.03.eb
   - ecCodes-2.48.0-cpeGNU-26.03.eb
@@ -71,11 +95,48 @@ easyconfigs:
 # CP2K
 # Skipped for now
 #
+  - ELPA-2025.06.001-cpeGNU-26.03-CPU.eb
+  - Libint-CP2K-2.7.2-cpeGNU-26.03.eb
+  - libvori-220621-cpeGNU-26.03.eb
+  - libxc-6.2.2-cpeGNU-26.03.eb
+  - libxsmm-1.17-cpeGNU-26.03.eb
+  - spglib-2.7.0-cpeGNU-26.03.eb
+  - COSMA-2.6.6-cpeGNU-26.03-CPU.eb
+  - PLUMED-2.9.5-cpeGNU-26.03-noPython.eb
+  - CP2K-2024.3-cpeGNU-26.03-CPU.eb
+# Incomplete set for CP2K 2026.2
+  - ELPA-2026.02.002-cpeGNU-26.03-CPU.eb
+  - Libint-CP2K-2.13.1-cpeGNU-26.03-lmax-6.eb
+  - libvori-220621-cpeGNU-26.03.eb
+  - libxc-7.0.0-cpeGNU-26.03-FHC.eb
+  - libxsmm-2.0.0-cpeGNU-26.03.eb
+  - libxs-1.0.0-cpeGNU-26.03.eb
+  - DBCSR-2.10.0-cpeGNU-26.03-OpenMP-MPI.eb
+  - spglib-2.7.0-cpeGNU-26.03-OpenMP.eb
+  - COSMA-2.8.4-cpeGNU-26.03-CPU-static.eb
+  - COSMA-2.8.4-cpeGNU-26.03-CPU-shared.eb
+  - PLUMED-2.10.1-cpeGNU-26.03-noPython.eb
+  - CP2K-2026.2-cpeGNU-26.03-CPU.eb
 #
 # Cython
 #
   - Cython-3.2.9-cpeGNU-26.03.eb
 # On LUMI-G also used for CuPy.
+#
+# DL_POLY_4
+  - DL_POLY_4-5.1.0-cpeGNU-26.03.eb
+  - DL_POLY_4-5.3.0-pre-cpeGNU-26.03.eb
+#
+# Extrae
+# TODO - Help from developers needed for verification?
+#
+#
+# Elk
+#
+  - libxc-7.0.0-cpeGNU-26.03-FHC.eb
+  - Wannier90-3.1.0-cpeGNU-26.03.eb
+  - Elk-10.3.12-cpeGNU-26.03.eb
+  - Elk-11.0.2-cpeGNU-26.03.eb
 #
 # feh (image viewer)
 #
@@ -96,26 +157,60 @@ easyconfigs:
   - GDAL-3.13.2-cpeGNU-26.03-noPython.eb
   - GDAL-3.13.2-cpeGNU-26.03-cray-python-3.12.12.eb
 #
+# GROMACS
+#
+  - GROMACS-2025.4-cpeGNU-26.03-CPU.eb
+  - GROMACS-2025.4-cpeCray-26.03-CPU.eb
+  - GROMACS-2026.3-cpeGNU-26.03-CPU.eb
+  - GROMACS-2026.3-cpeCray-26.03-CPU.eb
+#
+# LAMMPS
+# Testing may fail on the TDS as LAMMPS downloads packages in
+# the background. We've tried to eliminate those downloads though.
+#
+  - SZ-2.1.12.5-cpeGNU-26.03-hdf5-parallel.eb
+  - SZ3-3.3.2-cpeGNU-26.03-hdf5-parallel.eb
+  - Blosc2-2.23.1-cpeGNU-26.03.eb
+  - zfp-1.0.1-cpeGNU-26.03.eb
+  - OpenPGM-5.2.122-cpeGNU-26.03.eb
+  - libsodium-1.0.22-cpeGNU-26.03.eb
+  - ZeroMQ-4.3.5-cpeGNU-26.03.eb
+  - yaml-cpp-0.9.0-cpeGNU-26.03.eb
+  - ADIOS2-2.12.1-cpeGNU-26.03-MPI-hdf5-parallel.eb
+  - PLUMED-2.7.6-cpeGNU-26.03-noPython.eb
+  - ScaFaCoS-1.0.4-cpeGNU-26.03-forLAMMPS.eb
+  - Voro++-0.4.6-cpeGNU-26.03.eb
+  - LAMMPS-22Jul2025_update4-cpeGNU-26.03-CPU.eb
+#
+# libxc
+# Appears as dependencies but just in case we miss a variant...
+#
+  - libxc-7.0.0-cpeGNU-26.03-FHC.eb
+  - libxc-7.0.0-cpeGNU-26.03-KXC.eb
+  - libxc-7.1.2-cpeGNU-26.03-FHC.eb
+  - libxc-7.1.2-cpeGNU-26.03-NoFHC.eb
+  - libxc-7.1.2-cpeGNU-26.03-KXC.eb
+#
 # mpiFileUtils
 #
   - lustre-includes-2.15.5.eb # Though we may just want this in common.
   - mpiFileUtils-0.12-cpeGNU-26.03.eb
   - mpiFileUtils-0.12-cpeCray-26.03.eb
-  #- mpiFileUtils-0.12-cpeAOCC-26.03.eb
+  - mpiFileUtils-0.12-cpeAOCC-26.03.eb
 #
 # MUMPS
 #
-  - MUMPS-5.9.1-cpeGNU-26.03-static-OpenMP.eb
-  - MUMPS-5.9.1-cpeGNU-26.03-static-noOpenMP.eb
+  - MUMPS-5.9.1-cpeGNU-26.03-OpenMP-METIS-idx32-fp64.eb
+  - MUMPS-5.9.1-cpeGNU-26.03-noOpenMP-METIS-idx32-fp64.eb
 #
 # NCO
 #
   - CppUnit-1.15.1-cpeGNU-26.03.eb
   - CppUnit-1.15.1-cpeCray-26.03.eb
-  #- CppUnit-1.15.1-cpeAOCC-26.03.eb
+  - CppUnit-1.15.1-cpeAOCC-26.03.eb
   - libdap-3.21.1-cpeGNU-26.03.eb
   - libdap-3.21.1-cpeCray-26.03.eb
-# libdap was used in NCO but have trouble with it in 25.03 and 26.03
+# libdap was used in NCO but have trouble with it in 26.03 and 26.03
   - Java-25.0.4+7.eb
   - Java-25.eb
   - ANTLR-2.7.7-cpeGNU-26.03-cray-python3.12.eb
@@ -131,8 +226,166 @@ easyconfigs:
 #
   - ncview-2.1.9-cpeGNU-26.03.eb
   - ncview-2.1.9-cpeCray-26.03.eb
-  #- ncview-2.1.9-cpeAOCC-25.03.eb
+  - ncview-2.1.9-cpeAOCC-26.03.eb
 #
 # OpenBLAS
 #
   - OpenBLAS-0.3.32-cpeGNU-26.03.eb
+#
+# OpenFOAM
+#
+  - CGAL-5.6.3-cpeGNU-26.03-OpenFOAM.eb
+  - OpenFOAM-v2506-cpeGNU-26.03.eb
+#
+# PETSc with Hypre.
+#
+  - MUMPS-5.9.1-cpeGNU-26.03-OpenMP-METIS-idx32-fp32.eb
+  - Hypre-3.1.0-cpeGNU-26.03.eb
+  - SuperLU-7.0.1-cpeGNU-26.03-OpenMP-ParMETIS-idx32-fp32.eb
+  - SuperLU_DIST-9.2.1-cpeGNU-26.03-OpenMP-CPU-ParMETIS-idx32-fp32.eb
+  - PETSc-3.25.4-cpeGNU-26.03-OpenMP-CPU.eb
+#
+# PLUMED
+#
+  - PLUMED-2.9.5-cpeGNU-26.03-noPython.eb
+  - PLUMED-2.9.5-cpeCray-26.03-noPython.eb
+  - PLUMED-2.9.5-cpeGNU-26.03-cray-python-3.12.12.eb
+  - PLUMED-2.10.1-cpeGNU-26.03-noPython.eb
+  - PLUMED-2.10.1-cpeCray-26.03-noPython.eb
+  - PLUMED-2.10.1-cpeGNU-26.03-cray-python-3.12.12.eb
+#
+# QuEST
+#
+  - QuEST-3.7.0-cpeGNU-26.03-prec2-hybrid.eb
+  - QuEST-4.2.0-cpeGNU-26.03-prec2-hybrid.eb
+#
+# QuantumESPRESSO
+# Will not work on the TDS as for some reason it tries to download fox again even
+# though it has been put in place from a download in sources.
+#
+  - libxc-7.0.0-cpeGNU-26.03-FHC.eb
+  - ELPA-2025.06.001-cpeGNU-26.03-CPU.eb
+  - QuantumESPRESSO-7.5-cpeGNU-26.03-CPU.eb
+#
+# R
+#
+  - Info-ZIP-3.0-6.0-cpeGNU-26.03.eb
+  - libuv-1.52.1-cpeGNU-26.03.eb
+  - R-4.6.1-cpeGNU-26.03-OpenMP-raw.eb
+  - R-4.6.1-cpeGNU-26.03-OpenMP.eb
+#
+# Score-P - Usually comes from developers.
+# TODO
+#
+#
+# STRUMPACK
+#
+  - zfp-1.0.1-cpeGNU-26.03.eb
+  - STRUMPACK-7.2.0-cpeGNU-26.03-OpenMP-ParMETIS-idx32-fp32.eb
+  - STRUMPACK-8.0.0-cpeGNU-26.03-OpenMP-ParMETIS-idx32-fp32.eb
+#
+# SuperLU
+#
+  - SuperLU-7.0.1-cpeGNU-26.03-ParMETIS-idx32-fp32.eb
+  - SuperLU-7.0.1-cpeGNU-26.03-OpenMP-ParMETIS-idx32-fp32.eb
+#
+# Tau
+# TODO
+#
+#
+# Trilinos
+#
+  - MATIO-1.5.30-cpeGNU-26.03.eb
+  - MUMPS-5.9.1-cpeGNU-26.03-OpenMP-METIS-idx32-fp32.eb
+  - SuperLU_DIST-9.2.1-cpeGNU-26.03-OpenMP-CPU-ParMETIS-idx32-fp32.eb
+  - Trilinos-15.1.1-cpeGNU-26.03-OpenMP.eb
+#
+# UppASD
+#
+  - UppASD-6.0.2-cpeGNU-26.03.eb
+  - UppASD-6.0.2-cpeCray-26.03.eb
+#
+# VTK
+#
+  - Silo-4.12.1-cpeGNU-26.03.eb
+  - Conduit-0.9.7-cpeGNU-26.03.eb
+  - Catalyst-2.1.0-cpeGNU-26.03.eb
+  - zfp-1.0.1-cpeGNU-26.03.eb
+# Leading to VTK which has not yet been ported to 26.03
+#
+# Wannier90
+#
+  - Wannier90-3.1.0-cpeGNU-26.03.eb
+  - Wannier90-4.0.1-cpeGNU-26.03-OpenMP-MPI.eb
+  - Wannier90-4.0.1-cpeGNU-26.03-OpenMP-noMPI.eb
+#
+# Yambo
+#
+  - libxc-6.2.2-cpeGNU-26.03.eb
+  - DeviceXlib-0.9.1-cpeGNU-26.03-OpenMP-CPU.eb
+  - Yambo-5.3.0-cpeGNU-26.03.eb
+  - MUMPS-5.9.1-cpeGNU-26.03-OpenMP-METIS-idx32-fp32.eb
+  - Hypre-3.1.0-cpeGNU-26.03.eb
+  - SuperLU-7.0.1-cpeGNU-26.03-OpenMP-ParMETIS-idx32-fp32.eb
+  - SuperLU_DIST-9.2.1-cpeGNU-26.03-OpenMP-CPU-ParMETIS-idx32-fp32.eb
+  - PETSc-3.23.7-cpeGNU-26.03-OpenMP-CPU-forYambo.eb
+  - SLEPc-3.23.3-cpeGNU-26.03-OpenMP-CPU-forYambo.eb
+  - Yambo-5.3.0-cpeGNU-26.03-SLEPc-double.eb
+#
+################################################################################
+#
+# EPICURE contributions and updates of previous contributions
+#
+#
+# iPIC3D
+#
+  - iPIC3D-20260211-cpeGNU-26.03.eb
+  - iPIC3D-20260211-cpeCray-26.03.eb
+  - iPIC3D-20260211-cpeAOCC-26.03.eb
+#
+# MicroHH
+#
+  - MicroHH-2.0.2-cpeGNU-26.03.eb:
+      options:
+        skip-test-step: True
+#
+# URANOS
+#
+  - URANOS-20260515-cpeGNU-26.03.eb
+  - URANOS-20260515-cpeCray-26.03.eb
+  - URANOS-20260515-cpeAOCC-26.03.eb
+#
+# WRF-SFIRE and WPS
+# Needs csh to build.
+#
+  - WRF-SFIRE-W4.4-S0.1-cpeGNU-26.03.eb
+  - WPS-v4.4-cpeGNU-26.03-WRF-SFIRE-W4.4-S0.1.eb
+#
+################################################################################
+#
+# Packages that require manual downloads
+#
+#
+# Amber
+# TODO
+#
+  - arpack-ng-3.9.1-cpeGNU-26.03-OpenMP.eb
+#
+# NAMD
+#
+  - Tcl-8.6.18-cpeGNU-26.03.eb
+  - Charm++-8.0.0-cpeGNU-26.03-mpi-crayshasta.eb
+  - NAMD-3.0.3-cpeGNU-26.03-mpi-crayshasta.eb
+  - Charm++-8.0.0-cpeGNU-26.03-ofi-crayshasta.eb
+  - NAMD-3.0.3-cpeGNU-26.03-ofi-crayshasta.eb
+#
+# VASP
+# Partly skipped for now
+#
+  - DFTD4-3.7.0-cpeGNU-26.03.eb
+  - libxc-6.2.2-cpeGNU-26.03.eb
+  - Wannier90-3.1.0-cpeGNU-26.03.eb
+  - mctc-lib-0.5.2-cpeGNU-26.03.eb
+  - DFTD4-4.2.0-cpeGNU-26.03.eb
+  - libxc-7.1.2-cpeGNU-26.03-NoFHC.eb
+  - Wannier90-4.0.1-cpeGNU-26.03-MPI.eb

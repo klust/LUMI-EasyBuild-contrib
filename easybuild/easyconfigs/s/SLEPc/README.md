@@ -18,3 +18,10 @@
     developed by the Yambo authors.
 
 -   EasyConfig developed from a corresponding foss EasyConfig.
+
+
+### 3.23.3-cpeGNU-25.03-OpenMP-CPU-forYambo
+
+-   Bug fix release of the previous one so we decided to try that one for 26.03.
+
+-   Switched to EB6-compatible parameters in the EasyConfig.

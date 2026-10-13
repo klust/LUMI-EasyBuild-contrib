@@ -7,6 +7,10 @@ It is based on the Weather Research and Forecasting (WRF) model and includes add
 
 -   [WRF-SFIRE user guide and tutorial](https://wiki.openwfm.org/wiki/WRF-SFIRE_user_guide)
 
+-   [WRF-SFIRE on GitHub](https://github.com/openwfm/WRF-SFIRE)
+
+    -   [GitHub releases](https://github.com/openwfm/WRF-SFIRE/releases)
+
 
 ## EasyBuild
 

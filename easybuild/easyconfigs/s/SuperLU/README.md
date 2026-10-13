@@ -42,3 +42,8 @@
     with and without `-OpenMP` versionsuffix.
     
     Note that SuperLU itself is single-threaded code.
+
+-   For 26.03, we switched to EB6-compatible parameters. We also stuck to the `-idx32-fp32`
+    variant of ParMETIS which is what was the default behaviour before.
+
+    It also appears that this may be what PETSc uses by default.

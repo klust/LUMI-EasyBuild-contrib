@@ -6,6 +6,8 @@
 
     -   [Installation instructions on the GitLab](https://gitlab.mpcdf.mpg.de/elpa/elpa/blob/master/INSTALL.md)
 
+    -   [Gitlab releases](https://gitlab.mpcdf.mpg.de/elpa/elpa/-/releases)
+
 
 ## General information
 
@@ -42,6 +44,8 @@ multithread version or the singlethread version?
 -   [ELPA in the EasyBuilders repository](https://github.com/easybuilders/easybuild-easyconfigs/tree/develop/easybuild/easyconfigs/e/ELPA)
 
 -   [ELPA in the CSCS repository](https://github.com/eth-cscs/production/tree/master/easybuild/easyconfigs/e/ELPA)
+
+-   [Spack package elpa](https://packages.spack.io/package.html?name=elpa)
 
 
 ### 2021.05.002 for CPE 21.08 - Was in the central software stack
@@ -98,6 +102,13 @@ multithread version or the singlethread version?
 ### 2025.06.001 for GPU and CPU
 
 -   The EasyConfigs are based on those of previous versions.
+
+-   Switched to EB6-compatible parameters for 26.03.
+
+
+### 2026.02.002 for CPU
+
+-   The EasyConfig is a straightforward version bump of 2025.06.001 for 26.03.
 
 
 ### 2026.02.002 for GPU

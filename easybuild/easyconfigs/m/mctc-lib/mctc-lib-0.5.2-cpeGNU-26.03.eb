@@ -1,0 +1,58 @@
+easyblock = 'CMakeMake'
+
+name =    'mctc-lib'
+version = '0.5.2'
+
+homepage = 'https://grimme-lab.github.io/mctc-lib'
+
+whatis = [
+    'Description: Modular computation toolchain library for quantum chemistry file IO'
+]
+
+description = """
+Common toolchain for working with molecular structure data in various
+applications. This library provides a unified way to perform operations on
+molecular structure data, like reading and writing to common geometry file
+formats.
+"""
+
+toolchain = {'name': 'cpeGNU', 'version': '26.03'}
+toolchain_opts = {'pic': True}
+
+github_account = 'grimme-lab'
+source_urls =    [GITHUB_SOURCE]
+sources =        ['v%(version)s.tar.gz']
+checksums =      ['25b2a3d18343079e92449b9c8d73a23fa8dc0ede2faf5c94ad6cfa4676355133']
+
+build_deps = [
+    ('buildtools', '%(toolchain_version)s', '', SYSTEM),
+]
+
+pre_configure_opts = 'module unload cray-libsci cray-mpich xpmem rocm && '
+pre_install_opts = pre_test_opts = pre_build_opts = pre_configure_opts
+
+configure_opts = [
+    '-DBUILD_SHARED_LIBS=OFF', 
+    '-DBUILD_SHARED_LIBS=ON'
+]
+
+# run suite of tests with ctest
+run_test = True
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cd ../%(namelower)s-%(version)s && cp AGENTS.md LICENSE README.md %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+    'files': ['bin/mctc-convert', 'lib/libmctc-lib.a', f'lib/libmctc-lib.{SHLIB_EXT}'],
+    'dirs':  ['include/%(name)s', 'lib/cmake', 'lib/pkgconfig'],
+}
+
+sanity_check_cmds = [
+    'pkg-config --validate mctc-lib',
+    f'pkg-config --exact-version={version} mctc-lib',
+    'mctc-convert --help'
+]
+
+env_mod_category = 'chem'

@@ -1,0 +1,60 @@
+# Adapted for LUMI by Jakob Struye <jakob.struye@uantwerpen.be>
+# Developed by the EPICURE project (https://epicure-hpc.eu/)
+easyblock= 'ConfigureMake'
+
+name = 'URANOS'
+version = '20260515'
+
+homepage = 'https://github.com/uranos-gpu/uranos-gpu'
+
+whatis = [
+    "Description: URANOS is a Navier-Stokes solver for compressible flows with optional GPU acceleration."
+]
+
+description = """
+URANOS is a GPU-accelerated Navier-Stokes solver for compressible flows with direct
+relevance to aerospace propulsion systems and aerothermodynamics.
+
+This module contains a CPU-version though.
+"""
+
+toolchain = {'name': 'cpeCray', 'version': '26.03'}
+
+sources = [{
+  'filename': 'URANOS-git',
+  'git_config': {
+    'url': 'https://github.com/uranos-gpu/',
+    'repo_name': 'uranos-gpu',
+    'commit': '9c69c943c437ec8f11e0f70bd4c4deb64c17cd7a',
+    'keep_git_dir': False,
+  },
+}]
+patches = ['URANOS-Cray.patch']
+
+build_deps = [
+    ('buildtools', '%(toolchain_version)s', '', True),
+]
+
+skip_steps = ['configure']
+
+max_parallel = 1
+
+build_opts = 'comp=cray mode=cpu'
+
+install_cmd = 'cp -r * %(installdir)s'
+
+post_install_cmds = [
+    'mkdir -p %(installdir)s/share/licenses/%(name)s',
+    'cp LICENSE CITATION.cff %(installdir)s/share/licenses/%(name)s',   
+]
+
+sanity_check_paths = {
+  'files': [ "Uranos.exe" ],
+  'dirs':  [],
+}
+
+env_mod_extra_paths = {
+  'PATH': '%(installdir)s',
+}
+
+env_mod_category = 'geo'

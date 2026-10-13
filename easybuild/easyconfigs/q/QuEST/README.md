@@ -69,7 +69,7 @@ LUMI GPU partition.
     fixes need to be modified as the CMake build process has changed.
 
 
-### Version 3.7.0 for cpeGNU 23.09 and 24.03
+### Version 3.7.0 for cpeGNU 23.09 and 24.03 and later
 
 -   Patch step for the `CMakeLists.txt` is now done as a preconfig step.
 
@@ -79,10 +79,16 @@ LUMI GPU partition.
   
 -   Changed the name `-hybrid-prec2` to to `-prec2-hybrid` in 25.03 for consistency
     with the ROCm version and also moved the license inforrmation to where it belongs.
+
+-   Switched to EB6-compatible parameters for the 26.03 version.
+
+-   3.7.0 does not build anymore with ROCm(tm) 7.
     
     
-### QuEST 4.2.0 for cpeGNU 25.03
+### QuEST 4.2.0 for cpeGNU 25.03 and later
 
 -   The build process has been completely reworked. Hence the structure of the 
     EasyConfig was taken from the one for 3.7.0 for 24.03, but the options
     passed to CMake are completely redone.
+
+-   Switched to EB6-compatible parameters for the 26.03 version.
